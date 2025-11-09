@@ -63,13 +63,9 @@ export function InventoryTable({ assets }: InventoryTableProps) {
                 </span>
               </td>
               <td className="px-4 py-4">
-                {asset.spare ? (
-                  <span className="rounded-full border border-cyan-400/30 bg-cyan-400/10 px-2 py-1 text-xs text-cyan-100">
-                    Spare
-                  </span>
-                ) : (
-                  <span className="text-white/50">Primary</span>
-                )}
+                <span className="rounded-full border border-white/10 bg-white/5 px-2 py-1 text-xs">
+                  {asset.spare ? "spare" : "primary"}
+                </span>
               </td>
               <td className="px-4 py-4">{asset.timeInUse}</td>
               <td className="px-4 py-4">{asset.utilization}</td>

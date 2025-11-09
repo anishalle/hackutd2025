@@ -12,6 +12,10 @@ import { TechnicianQueue } from "@/components/dashboard/technician-queue";
 import { TicketBoard } from "@/components/dashboard/ticket-board";
 import { LocationSwitcher } from "@/components/layout/location-switcher";
 import { fabricLocations } from "@/lib/locations";
+import {
+  ambiguousTicketSignals,
+  knownTicketPlaybooks,
+} from "@/lib/tickets/data";
 
 const metrics = [
   {
@@ -40,51 +44,28 @@ const metrics = [
   },
 ];
 
-const knownTickets = [
-  {
-    id: "WO-9823",
-    title: "Replace PSU on rack P44",
-    severity: "critical" as const,
-    eta: "Crew en route • 15m",
-    details: "Telemetry caught undervolt on redundant PSU before failover.",
-    parallelGroup: "A",
-    source: "slack" as const,
-  },
-  {
-    id: "WO-9824",
-    title: "Provision 10-node pod for SentiAI",
-    severity: "high" as const,
-    eta: "Auto-run after cabling clear",
-    details: "All prep tasks ready. Waiting on quick provision trigger.",
-    parallelGroup: "B",
-    source: "manual" as const,
-  },
-];
+const knownTickets = knownTicketPlaybooks.map((ticket) => ({
+  id: ticket.id,
+  title: ticket.title,
+  severity: (ticket.severity === "low" ? "medium" : ticket.severity) as
+    | "critical"
+    | "high"
+    | "medium",
+  eta: ticket.eta,
+  details: ticket.summary,
+  parallelGroup: ticket.parallelGroup,
+  source: ticket.channel,
+}));
 
-const ambiguousTickets = [
-  {
-    id: "SIG-442",
-    title: "Node pool 7 intermittent resets",
-    severity: "high" as const,
-    signal: "Sudden power draw spikes across 3 sleds; no single fault yet.",
-    hypotheses: [
-      { label: "Cooling pump cavitation", confidence: 42 },
-      { label: "NVLink harness pinch", confidence: 33 },
-      { label: "Firmware regression", confidence: 25 },
-    ],
-  },
-  {
-    id: "SIG-448",
-    title: "West aisle network flap",
-    severity: "medium" as const,
-    signal: "Optics BER up 18% w/out CRCs; optical budget near limit.",
-    hypotheses: [
-      { label: "Fiber bend radius violation", confidence: 47 },
-      { label: "Faulty QSFP", confidence: 29 },
-      { label: "Patch panel contamination", confidence: 24 },
-    ],
-  },
-];
+const ambiguousTickets = ambiguousTicketSignals.map((ticket) => ({
+  id: ticket.id,
+  title: ticket.title,
+  severity: (ticket.severity === "critical" ? "high" : ticket.severity) as
+    | "high"
+    | "medium",
+  signal: ticket.signal ?? ticket.summary,
+  hypotheses: ticket.hypotheses ?? [],
+}));
 
 const workloads = [
   {

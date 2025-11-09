@@ -34,6 +34,7 @@ export default function RootLayout({
             { label: "Overview", href: "/" },
             { label: "Tickets", href: "/tickets" },
             { label: "Field Ops", href: "/field-ops" },
+            { label: "Floor Plan", href: "/floor-plan" },
             { label: "Inventory", href: "/inventory" },
           ]}
         />
