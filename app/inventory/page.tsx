@@ -21,6 +21,9 @@ export default function InventoryPage() {
   >([]);
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [query, setQuery] = useState("");
+  const [depletionSort, setDepletionSort] = useState<"high" | "low" | null>(
+    null,
+  );
 
   useEffect(() => {
     const fetchInventory = async () => {
@@ -61,7 +64,7 @@ export default function InventoryPage() {
   }, [items]);
 
   const filteredItems = useMemo(() => {
-    return items.filter((item) => {
+    const filtered = items.filter((item) => {
       if (
         selectedStatus.length > 0 &&
         !selectedStatus.includes(item.status)
@@ -88,7 +91,24 @@ export default function InventoryPage() {
       }
       return true;
     });
-  }, [items, selectedStatus, selectedCategories, query]);
+    if (!depletionSort) return filtered;
+
+    const severityRank: Record<string, number> = {
+      Depleted: 3,
+      Critical: 2,
+      Warning: 1,
+      Healthy: 0,
+    };
+
+    return [...filtered].sort((a, b) => {
+      const aRank = severityRank[a.depletionStatus] ?? -1;
+      const bRank = severityRank[b.depletionStatus] ?? -1;
+      if (depletionSort === "high") {
+        return bRank - aRank;
+      }
+      return aRank - bRank;
+    });
+  }, [items, selectedStatus, selectedCategories, query, depletionSort]);
 
   const refillCount = filteredItems.filter((item) =>
     ["Warning", "Critical", "Depleted"].includes(item.depletionStatus),
@@ -169,6 +189,21 @@ export default function InventoryPage() {
               options={categoryOptions}
               selected={selectedCategories}
               onChange={setSelectedCategories}
+            />
+            <FilterMultiSelect
+              label="Depletion sort"
+              options={[
+                { value: "high", label: "High → low" },
+                { value: "low", label: "Low → high" },
+              ]}
+              selected={depletionSort ? [depletionSort] : []}
+              onChange={(values) => {
+                const next = values[values.length - 1] as
+                  | "high"
+                  | "low"
+                  | undefined;
+                setDepletionSort(next ?? null);
+              }}
             />
             <div className="ml-auto flex items-center">
               <input

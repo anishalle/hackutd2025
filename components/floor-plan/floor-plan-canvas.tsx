@@ -5,6 +5,7 @@ import { useCallback, useMemo, useState } from "react";
 import {
   FabricFloor,
   FloorAnnotation,
+  FloorCluster,
   PathNode,
   TileDefinition,
 } from "@/lib/floor-plan/types";
@@ -30,11 +31,20 @@ type HoveredTile = {
 
 type HoveredItem = HoveredAnnotation | HoveredRouteNode | HoveredTile;
 
+export type CellSelectionPayload = {
+  floor: FabricFloor;
+  coord: PathNode["coord"];
+  tile?: TileDefinition | null;
+  routeNode?: PathNode | null;
+  clusters: FloorCluster[];
+};
+
 type FloorPlanCanvasProps = {
   floor: FabricFloor;
   tileDefinitions: TileDefinition[];
   route: PathNode[];
   path?: FacilityCoord[];
+  onSelectCell?: (payload: CellSelectionPayload) => void;
 };
 
 const CELL_SIZE = 44;
@@ -65,6 +75,7 @@ export function FloorPlanCanvas({
   tileDefinitions,
   route,
   path,
+  onSelectCell,
 }: FloorPlanCanvasProps) {
   const [hoveredItem, setHoveredItem] = useState<HoveredItem | null>(null);
 
@@ -214,6 +225,31 @@ export function FloorPlanCanvas({
     };
   })();
 
+  const findRouteNode = useCallback(
+    (coord: PathNode["coord"]) =>
+      nodesOnFloor.find(
+        (node) => node.coord.x === coord.x && node.coord.y === coord.y,
+      ) ?? null,
+    [nodesOnFloor],
+  );
+
+  const handleSelect = useCallback(
+    (coord: PathNode["coord"], tile?: TileDefinition | null) => {
+      if (!onSelectCell) return;
+      const coordKey = toKey(coord.x, coord.y);
+      const clusters = clusterLookup.get(coordKey) ?? [];
+      const routeNode = findRouteNode(coord);
+      onSelectCell({
+        floor,
+        coord,
+        tile: tile ?? null,
+        routeNode: routeNode ?? null,
+        clusters,
+      });
+    },
+    [clusterLookup, findRouteNode, floor, onSelectCell],
+  );
+
   return (
     <div className="rounded-3xl border border-white/5 bg-gradient-to-br from-slate-900/80 via-slate-900/40 to-slate-900/10 p-6 shadow-2xl">
       <div className="mb-4 flex items-center justify-between text-xs uppercase tracking-[0.2em] text-white/60">
@@ -259,13 +295,14 @@ export function FloorPlanCanvas({
               const fill = tile?.fill ?? "#0f172a";
               const stroke = tile?.border ?? "#1f2937";
               const hasSlurm = Boolean(tile?.slurmDiagnostics);
+              const coord = { x: columnIndex, y: rowIndex };
               const hoverHandlers = hasSlurm
                 ? {
                     onMouseEnter: () =>
                       setHoveredItem({
                         type: "tile",
                         data: {
-                          coord: { x: columnIndex, y: rowIndex },
+                          coord,
                           tile: tile!,
                         },
                       }),
@@ -273,7 +310,7 @@ export function FloorPlanCanvas({
                       setHoveredItem({
                         type: "tile",
                         data: {
-                          coord: { x: columnIndex, y: rowIndex },
+                          coord,
                           tile: tile!,
                         },
                       }),
@@ -294,7 +331,8 @@ export function FloorPlanCanvas({
                     stroke={stroke}
                     strokeWidth={1.4}
                     opacity={code === 4 ? 0.85 : 1}
-                    className={hasSlurm ? "cursor-pointer" : undefined}
+                    className="cursor-pointer"
+                    onClick={() => handleSelect(coord, tile)}
                     {...hoverHandlers}
                   />
                 </g>
@@ -322,6 +360,10 @@ export function FloorPlanCanvas({
             const baseColor =
               (node.priority && priorityStroke[node.priority]?.stroke) ||
               "#e2e8f0";
+            const tileCode =
+              floor.grid[node.coord.y]?.[node.coord.x];
+            const nodeTile =
+              typeof tileCode === "number" ? tileLookup.get(tileCode) ?? null : null;
             return (
               <g
                 key={`${node.id}-${node.floorId}`}
@@ -330,6 +372,9 @@ export function FloorPlanCanvas({
                 onFocus={() => setHoveredItem({ type: "route", data: node })}
                 onMouseLeave={() => setHoveredItem(null)}
                 onBlur={() => setHoveredItem(null)}
+                onClick={() =>
+                  handleSelect(node.coord, nodeTile)
+                }
               >
                 <circle
                   cx={x}

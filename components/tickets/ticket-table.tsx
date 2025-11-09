@@ -3,6 +3,7 @@
 import { Fragment, useMemo, useState } from "react";
 
 import type { FabricTicket } from "@/lib/tickets/types";
+import { credentialPool } from "@/lib/automation/credential-pool";
 
 type TicketTableProps = {
   tickets: FabricTicket[];
@@ -182,11 +183,20 @@ type TicketDetailsProps = {
 };
 
 function TicketDetails({ ticket }: TicketDetailsProps) {
+  const [fastFixResult, setFastFixResult] = useState<string | null>(null);
+  const [fastFixCursor, setFastFixCursor] = useState(0);
   const affectedItems = [
     { label: "Customers", data: ticket.affectedCustomers },
     { label: "Systems", data: ticket.affectedSystems },
     { label: "Servers", data: ticket.affectedServers },
   ];
+
+  const handleFastFix = () => {
+    if (credentialPool.length === 0) return;
+    const pair = credentialPool[fastFixCursor % credentialPool.length];
+    setFastFixResult(`${pair.username} / ${pair.password}`);
+    setFastFixCursor((prev) => (prev + 1) % credentialPool.length);
+  };
 
   return (
     <div className="space-y-4 rounded-2xl border border-white/10 bg-slate-950/70 p-4 text-sm text-white/80">
@@ -250,21 +260,29 @@ function TicketDetails({ ticket }: TicketDetailsProps) {
         </div>
       </div>
       {ticket.team === "admin" && ticket.fastFixAvailable ? (
-        <div className="flex flex-wrap items-center justify-between gap-3 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3">
-          <div>
-            <p className="text-sm font-semibold text-emerald-200">
-              Fast fix available
-            </p>
-            <p className="text-xs text-white/70">
-              Launch automation to provision scoped credentials instantly.
-            </p>
+        <div className="space-y-2 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 px-4 py-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div>
+              <p className="text-sm font-semibold text-emerald-200">
+                Fast fix available
+              </p>
+              <p className="text-xs text-white/70">
+                Launch automation to provision scoped credentials instantly.
+              </p>
+            </div>
+            <button
+              type="button"
+              onClick={handleFastFix}
+              className="rounded-full bg-emerald-500/90 px-4 py-2 text-sm font-semibold text-slate-950 transition hover:bg-emerald-400"
+            >
+              Generate user + password
+            </button>
           </div>
-          <button
-            type="button"
-            className="rounded-full bg-emerald-500/90 px-4 py-2 text-sm font-semibold text-slate-950 hover:bg-emerald-400"
-          >
-            Generate user + password
-          </button>
+          {fastFixResult ? (
+            <div className="rounded-2xl border border-emerald-400/30 bg-emerald-400/10 px-3 py-2 font-mono text-sm text-emerald-100">
+              {fastFixResult}
+            </div>
+          ) : null}
         </div>
       ) : null}
     </div>
