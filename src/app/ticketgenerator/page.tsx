@@ -39,7 +39,7 @@ type Ticket = {
     | "telemetry"
     | "vlan"
   )[];
-  channel: "email";
+  channel: "email" | "slack";
   location: string;
   customer?: string;
   summary: string;
@@ -64,22 +64,64 @@ export default function TicketGeneratorPage() {
       setLoading(true);
       setError(null);
 
-      const res = await fetch("/api/tickets/from-email");
-      const data = await res.json();
+      // Fetch from both sources in parallel
+      const [emailRes, slackRes] = await Promise.allSettled([
+        fetch("/api/tickets/from-email"),
+        fetch("/api/tickets/from-slack"),
+      ]);
 
-      if (!res.ok) {
-        throw new Error(data.error || "Failed to load tickets");
+      const combined: Ticket[] = [];
+
+      if (emailRes.status === "fulfilled") {
+        const res = emailRes.value;
+        try {
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data.tickets)) {
+              combined.push(
+                ...data.tickets.map((t: any) => ({
+                  ...t,
+                  channel: "email" as const,
+                }))
+              );
+            }
+          }
+        } catch (e) {
+          console.error("Failed to parse email tickets", e);
+        }
       }
 
-      const incoming: Ticket[] = data.tickets || [];
-      setTickets(incoming);
-      if (incoming.length > 0) {
-        setSelected(incoming[0]);
-      } else {
+      if (slackRes.status === "fulfilled") {
+        const res = slackRes.value;
+        try {
+          if (res.ok) {
+            const data = await res.json();
+            if (Array.isArray(data.tickets)) {
+              combined.push(
+                ...data.tickets.map((t: any) => ({
+                  ...t,
+                  channel: "slack" as const,
+                }))
+              );
+            }
+          }
+        } catch (e) {
+          console.error("Failed to parse slack tickets", e);
+        }
+      }
+
+      if (!combined.length) {
+        setTickets([]);
         setSelected(null);
+      } else {
+        // Optional: sort here if you add timestamps later
+        setTickets(combined);
+        setSelected(combined[0]);
       }
     } catch (err: any) {
+      console.error(err);
       setError(err.message || "Something went wrong");
+      setTickets([]);
       setSelected(null);
     } finally {
       setLoading(false);
@@ -100,7 +142,7 @@ export default function TicketGeneratorPage() {
           </h1>
           <p className="text-sm text-slate-400">
             AI-normalized incident tickets from{" "}
-            <span className="font-mono">nmc.ops.demo@gmail.com</span>
+            <span className="font-mono">nmc.ops.demo@gmail.com</span> and Slack DMs
           </p>
         </div>
         <button
@@ -127,7 +169,7 @@ export default function TicketGeneratorPage() {
 
           {!loading && !error && tickets.length === 0 && (
             <div className="p-6 text-sm text-slate-400">
-              No tickets yet. Send an incident email to this inbox.
+              No tickets yet. Send an incident email or DM the Slack bot.
             </div>
           )}
 
@@ -160,6 +202,9 @@ export default function TicketGeneratorPage() {
                   </span>
                   <span className="px-1.5 py-0.5 rounded-full bg-slate-900 border border-slate-800">
                     {t.kind}
+                  </span>
+                  <span className="px-1.5 py-0.5 rounded-full bg-slate-900 border border-slate-800">
+                    {t.channel}
                   </span>
                   {t.location && (
                     <span className="px-1.5 py-0.5 rounded-full bg-slate-900 border border-slate-800">
@@ -197,7 +242,8 @@ export default function TicketGeneratorPage() {
                 </div>
 
                 <h2 className="text-lg font-semibold">
-                    [{selected.severity?.toUpperCase() || "UNKNOWN"}] {selected.title}
+                  [{selected.severity?.toUpperCase() || "UNKNOWN"}]{" "}
+                  {selected.title}
                 </h2>
 
                 <div className="flex flex-wrap gap-2 text-[9px] text-slate-300">
@@ -253,7 +299,6 @@ export default function TicketGeneratorPage() {
                   )}
                 </div>
 
-                {/* Tags */}
                 {selected.tags?.length > 0 && (
                   <div className="flex flex-wrap gap-1.5 pt-1">
                     {selected.tags.map((tag) => (
@@ -288,31 +333,33 @@ export default function TicketGeneratorPage() {
                   </p>
                 </div>
 
-                {selected.affectedSystems && selected.affectedSystems.length > 0 && (
-                  <div>
-                    <h3 className="text-xs font-semibold text-slate-400 uppercase">
-                      Affected Systems
-                    </h3>
-                    <ul className="mt-1 text-slate-200 text-sm list-disc list-inside space-y-0.5">
-                      {selected.affectedSystems.map((s) => (
-                        <li key={s}>{s}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                {selected.affectedSystems &&
+                  selected.affectedSystems.length > 0 && (
+                    <div>
+                      <h3 className="text-xs font-semibold text-slate-400 uppercase">
+                        Affected Systems
+                      </h3>
+                      <ul className="mt-1 text-slate-200 text-sm list-disc list-inside space-y-0.5">
+                        {selected.affectedSystems.map((s) => (
+                          <li key={s}>{s}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
-                {selected.affectedServers && selected.affectedServers.length > 0 && (
-                  <div>
-                    <h3 className="text-xs font-semibold text-slate-400 uppercase">
-                      Affected Servers
-                    </h3>
-                    <ul className="mt-1 text-slate-200 text-sm list-disc list-inside space-y-0.5">
-                      {selected.affectedServers.map((s) => (
-                        <li key={s}>{s}</li>
-                      ))}
-                    </ul>
-                  </div>
-                )}
+                {selected.affectedServers &&
+                  selected.affectedServers.length > 0 && (
+                    <div>
+                      <h3 className="text-xs font-semibold text-slate-400 uppercase">
+                        Affected Servers
+                      </h3>
+                      <ul className="mt-1 text-slate-200 text-sm list-disc list-inside space-y-0.5">
+                        {selected.affectedServers.map((s) => (
+                          <li key={s}>{s}</li>
+                        ))}
+                      </ul>
+                    </div>
+                  )}
 
                 {selected.affectedCustomers &&
                   selected.affectedCustomers.length > 0 && (
