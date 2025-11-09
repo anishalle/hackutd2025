@@ -270,13 +270,6 @@ export default function Home() {
               <TechnicianQueue routes={technicianRoutes} />
             </SectionCard>
 
-            <SectionCard
-              eyebrow="Technicians"
-              title="Map & floor plan"
-              description="Canvas placeholder for the Next.js map module."
-            >
-              <MapPlaceholder />
-            </SectionCard>
 
             <SectionCard
               eyebrow="Cabling"

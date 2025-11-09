@@ -105,9 +105,9 @@ export default function TicketsPage() {
         hour: "2-digit",
         minute: "2-digit",
       });
-      return `Inbox synced at ${label} · ${emailTickets.length} ticket${emailTickets.length === 1 ? "" : "s"}`;
+      return `Slack + email synced at ${label} · ${emailTickets.length} ticket${emailTickets.length === 1 ? "" : "s"}`;
     }
-    return "Open the email inbox to sync AI tickets.";
+    return "Open the Slack + email inbox to sync AI tickets.";
   }, [lastSyncedAt, emailTickets.length]);
 
   const bundleSummary = useMemo(() => {
@@ -138,16 +138,18 @@ export default function TicketsPage() {
                 Filters, tags, and SLAs faced by admin vs technician flows in one view.
               </p>
             </div>
-            <div className="flex w-full max-w-xs flex-1 flex-col gap-3">
+            <div className="w-full max-w-xs flex-1">
               <LocationSwitcher locations={fabricLocations} initialId="demo" />
-              <Link
-                href="/ticketgenerator"
-                className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-gradient-to-r from-fuchsia-500/30 to-cyan-500/30 px-4 py-2 text-sm font-semibold text-white shadow-[0_0_20px_rgba(236,72,153,0.25)] transition hover:border-white/40 hover:from-fuchsia-500 hover:to-cyan-500"
-              >
-                Open email inbox
-              </Link>
-              <p className="text-xs text-white/60">{inboxStatus}</p>
             </div>
+          </div>
+          <div className="flex flex-col items-end gap-2 text-right">
+            <Link
+              href="/ticketgenerator"
+              className="inline-flex items-center justify-center rounded-2xl border border-white/15 bg-gradient-to-r from-fuchsia-500/30 to-cyan-500/30 px-4 py-2 text-sm font-semibold text-white shadow-[0_0_20px_rgba(236,72,153,0.25)] transition hover:border-white/40 hover:from-fuchsia-500 hover:to-cyan-500"
+            >
+              Sync Slack + email inbox
+            </Link>
+            <p className="text-xs text-white/60">{inboxStatus}</p>
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             {[

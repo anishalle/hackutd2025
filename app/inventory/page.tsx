@@ -129,11 +129,11 @@ export default function InventoryPage() {
                 Inventory
               </p>
               <h1 className="text-4xl font-semibold">
-                Predictive shelves · live Mongo feed
+                Predictive Inventory System
               </h1>
               <p className="mt-2 max-w-2xl text-base text-white/70">
                 Track high-velocity spares, thresholds, and depletion signals
-                across the fabric without exposing site metadata.
+                across the fabric.
               </p>
             </div>
             <div className="w-full max-w-xs flex-1">
