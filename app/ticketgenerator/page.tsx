@@ -14,7 +14,7 @@ type Ticket = {
   status: string;
   eta: string;
   tags: string[];
-  channel: "email";
+  channel: "email" | "slack";
   location: string;
   customer?: string;
   summary: string;
@@ -53,33 +53,64 @@ export default function TicketGeneratorPage() {
   );
 
   const loadTickets = async () => {
-    try {
-      setLoading(true);
-      setError(null);
-      const response = await fetch("/api/tickets/from-email", {
-        cache: "no-store",
-      });
-      const data = await response.json();
-      if (!response.ok) {
-        throw new Error(data.error || "Failed to load tickets");
+    setLoading(true);
+    setError(null);
+
+    const errors: string[] = [];
+
+    const fetchInbox = async (
+      path: string,
+      channel: Ticket["channel"],
+    ): Promise<Ticket[]> => {
+      try {
+        const response = await fetch(path, { cache: "no-store" });
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(
+            data?.error || `Failed to load ${channel} inbox`,
+          );
+        }
+        if (!Array.isArray(data.tickets)) {
+          return [];
+        }
+        return data.tickets.map((ticket: Ticket) => ({
+          ...ticket,
+          channel,
+        }));
+      } catch (err) {
+        console.error(`Failed to load ${channel} tickets`, err);
+        errors.push(
+          err instanceof Error
+            ? err.message
+            : `Failed to load ${channel} inbox`,
+        );
+        return [];
       }
-      const incoming: Ticket[] = data.tickets ?? [];
-      setTickets(incoming);
-      setSelectedId(incoming[0]?.id ?? null);
+    };
+
+    try {
+      const [emailInbox, slackInbox] = await Promise.all([
+        fetchInbox("/api/tickets/from-email", "email"),
+        fetchInbox("/api/tickets/from-slack", "slack"),
+      ]);
+      const combined = [...emailInbox, ...slackInbox];
+      setTickets(combined);
+      setSelectedId(combined[0]?.id ?? null);
       if (typeof window !== "undefined") {
         try {
           window.localStorage.setItem(
             "nmc.emailTickets",
-            JSON.stringify(incoming),
+            JSON.stringify(combined),
           );
           window.localStorage.setItem(
             "nmc.emailTicketsSyncedAt",
             Date.now().toString(),
           );
         } catch (storageError) {
-          console.error("Failed to cache email tickets", storageError);
+          console.error("Failed to cache synced tickets", storageError);
         }
       }
+      setError(errors.length ? errors.join(" ") : null);
     } catch (err) {
       console.error("ticket generator failed", err);
       setError(err instanceof Error ? err.message : "Unknown error");
@@ -105,14 +136,14 @@ export default function TicketGeneratorPage() {
                 Ticket generator
               </p>
               <h1 className="text-4xl font-semibold">
-                Email inbox · AI normalized incidents
+                Slack + email inbox · AI normalized incidents
               </h1>
               <p className="mt-2 max-w-2xl text-base text-white/70">
-                Pull unread inbox alerts from{" "}
+                Pull unread alerts from{" "}
                 <span className="font-mono text-white">
                   nmc.ops.demo@gmail.com
                 </span>{" "}
-                and convert them into structured work orders.
+                and DM escalations into structured work orders.
               </p>
             </div>
             <div className="flex flex-wrap gap-3">
@@ -155,9 +186,9 @@ export default function TicketGeneratorPage() {
                   </div>
                 ) : tickets.length === 0 ? (
                   <div className="space-y-3 p-4 text-sm text-white/60">
-                    <p>No unread incident emails in the inbox.</p>
+                    <p>No unread incident messages in Gmail or Slack.</p>
                     <p className="text-white/40">
-                      Send a test alert and refresh to see it here.
+                      Send a test email or Slack DM and refresh to see it here.
                     </p>
                   </div>
                 ) : (
@@ -186,6 +217,9 @@ export default function TicketGeneratorPage() {
                                 </span>
                               </div>
                               <div className="flex flex-wrap gap-2 text-[11px] text-white/60">
+                                <span className="rounded-full border border-white/15 px-2 py-0.5 capitalize">
+                                  {ticket.channel === "slack" ? "Slack" : "Email"}
+                                </span>
                                 <span className="rounded-full border border-white/15 px-2 py-0.5">
                                   {queueLabel[ticket.queue]}
                                 </span>
@@ -230,7 +264,9 @@ export default function TicketGeneratorPage() {
                         {selectedTicket.id}
                       </span>
                       <span>·</span>
-                      <span>{selectedTicket.channel}</span>
+                      <span>
+                        {selectedTicket.channel === "slack" ? "Slack" : "Email"}
+                      </span>
                     </div>
                     <h2 className="text-2xl font-semibold">
                       {selectedTicket.title}

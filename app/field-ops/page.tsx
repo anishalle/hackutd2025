@@ -1,70 +1,8 @@
 import { CablingVisualizer } from "@/components/dashboard/cabling-visualizer";
 import { SectionCard } from "@/components/dashboard/section-card";
-import { TechnicianQueue } from "@/components/dashboard/technician-queue";
-import { MapPlaceholder } from "@/components/dashboard/map-placeholder";
-import { InstallQueue } from "@/components/field-ops/install-queue";
+import { DeviceAssistant } from "@/components/field-ops/device-assistant";
 import { LocationSwitcher } from "@/components/layout/location-switcher";
 import { fabricLocations } from "@/lib/locations";
-
-const technicianRoutes = [
-  {
-    rank: 1,
-    ticket: "WO-9830",
-    task: "Swap QSFP on spine 6",
-    priority: "critical" as const,
-    distance: "58m",
-    floor: "L3 Aisle 6",
-    elevation: "+7ft",
-  },
-  {
-    rank: 2,
-    ticket: "WO-9828",
-    task: "Inspect liquid loop Delta pod",
-    priority: "high" as const,
-    distance: "74m",
-    floor: "L2 Cold Row",
-    elevation: "-4ft",
-  },
-  {
-    rank: 3,
-    ticket: "WO-9831",
-    task: "Verify cabling bundle 44B",
-    priority: "standard" as const,
-    distance: "110m",
-    floor: "L2 Hot Row",
-    elevation: "+2ft",
-  },
-];
-
-const tasks = [
-  {
-    id: "FIELD-21",
-    title: "Rack install · Pod 12B",
-    type: "install" as const,
-    owner: "Crew Nova",
-    status: "in-progress" as const,
-    window: "00:00 - 03:00",
-    notes: "Mount 4 chassis, terminate power whips, hand off to cabling.",
-  },
-  {
-    id: "FIELD-22",
-    title: "Cabling sweep · Fabric Spine",
-    type: "cabling" as const,
-    owner: "Crew Halo",
-    status: "ready" as const,
-    window: "02:00 - 04:00",
-    notes: "Validate reroute on fibers 6-12, log losses to DB.",
-  },
-  {
-    id: "FIELD-24",
-    title: "Troubleshoot resets · Pod 7",
-    type: "troubleshoot" as const,
-    owner: "Crew Zulu",
-    status: "blocked" as const,
-    window: "Waiting parts",
-    notes: "Await spare NVSwitch harness, then rerun diagnostics.",
-  },
-];
 
 export default function FieldOpsPage() {
   return (
@@ -112,30 +50,14 @@ export default function FieldOpsPage() {
         <div className="grid gap-6 lg:grid-cols-[1.1fr_0.9fr]">
           <div className="space-y-6">
             <SectionCard
-              eyebrow="Technicians"
-              title="Route planning"
-              description="Distance, floor plan, and altitude in one ranked queue."
+              eyebrow="AI Assistant"
+              title="Device & parts guide"
+              description="Instant install + troubleshooting help grounded in real hardware specs."
             >
-              <TechnicianQueue routes={technicianRoutes} />
-            </SectionCard>
-
-            <SectionCard
-              eyebrow="Install & troubleshooting"
-              title="Field queue"
-              description="Every job is typed so installs, cabling, and diagnostics do not collide."
-            >
-              <InstallQueue tasks={tasks} />
+              <DeviceAssistant />
             </SectionCard>
           </div>
           <div className="space-y-6">
-            <SectionCard
-              eyebrow="Map"
-              title="Floor plan canvas"
-              description="Next.js map module placeholder."
-            >
-              <MapPlaceholder />
-            </SectionCard>
-
             <SectionCard
               eyebrow="Cabling"
               title="Bundle health"
