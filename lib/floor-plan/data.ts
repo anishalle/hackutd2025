@@ -1,9 +1,8 @@
 import {
   FabricFloor,
   FloorAnnotation,
+  FloorCluster,
   FloorGrid,
-  PathGraph,
-  RouteSequence,
   TileDefinition,
 } from "@/lib/floor-plan/types";
 
@@ -208,6 +207,117 @@ const levelOneAnnotations: FloorAnnotation[] = [
   },
 ];
 
+const levelOneClusters: FloorCluster[] = [
+  {
+    id: "desk",
+    label: "Ops desk",
+    floorId: "L1",
+    coord: { x: 1, y: 1 },
+    cells: [{ x: 1, y: 1 }],
+    kind: "ops",
+    summary: "Technician dispatch + briefing",
+    tags: ["start"],
+  },
+  {
+    id: "patch-staging",
+    label: "Patch staging",
+    floorId: "L1",
+    coord: { x: 4, y: 3 },
+    cells: [
+      { x: 4, y: 3 },
+      { x: 3, y: 3 },
+    ],
+    kind: "support",
+    summary: "Fiber prep and harness laydown",
+    tags: ["fiber", "prep"],
+  },
+  {
+    id: "inventory-optics",
+    label: "QSFP cache",
+    floorId: "L1",
+    coord: { x: 7, y: 1 },
+    cells: [{ x: 7, y: 1 }],
+    kind: "inventory",
+    summary: "400G optics + trunk jumpers",
+    inventoryItems: ["qsfp", "fiber-kit"],
+  },
+  {
+    id: "inventory-gaskets",
+    label: "Gasket & coolant bin",
+    floorId: "L1",
+    coord: { x: 8, y: 1 },
+    cells: [{ x: 8, y: 1 }],
+    kind: "inventory",
+    summary: "Cold plate kits, sensors, PSU sleds",
+    inventoryItems: ["cooling-kit", "sensor", "psu"],
+  },
+  {
+    id: "toolcrib-l1",
+    label: "Tool crib",
+    floorId: "L1",
+    coord: { x: 7, y: 6 },
+    cells: [
+      { x: 7, y: 6 },
+      { x: 7, y: 5 },
+    ],
+    kind: "inventory",
+    summary: "Install kits, diagnostic packs",
+    inventoryItems: ["install-kit", "diagnostic-pack"],
+  },
+  {
+    id: "row7-diagnostics",
+    label: "Pod 7 sleds",
+    floorId: "L1",
+    coord: { x: 2, y: 4 },
+    cells: [
+      { x: 2, y: 4 },
+      { x: 3, y: 4 },
+    ],
+    kind: "rack",
+    summary: "Row 7 sled cluster diagnostics zone",
+    tags: ["compute", "row7"],
+  },
+  {
+    id: "plant-chill",
+    label: "Chill plant south",
+    floorId: "L1",
+    coord: { x: 1, y: 6 },
+    cells: [
+      { x: 1, y: 6 },
+      { x: 2, y: 6 },
+    ],
+    kind: "support",
+    summary: "Loop pumps + redundant flow sensors",
+    tags: ["cooling"],
+  },
+  {
+    id: "service-bay",
+    label: "Service bay",
+    floorId: "L1",
+    coord: { x: 6, y: 6 },
+    cells: [
+      { x: 6, y: 6 },
+      { x: 6, y: 5 },
+    ],
+    kind: "service",
+    summary: "Robotics + LIDAR maintenance bay",
+    tags: ["robotics"],
+  },
+  {
+    id: "elevator-l1",
+    label: "Lift A · concourse",
+    floorId: "L1",
+    coord: { x: 2, y: 5 },
+    cells: [
+      { x: 2, y: 5 },
+      { x: 2, y: 4 },
+    ],
+    kind: "support",
+    summary: "Vertical lift to GPU + spine levels",
+    tags: ["elevator"],
+  },
+];
+
 const levelTwoAnnotations: FloorAnnotation[] = [
   {
     id: "g-02-02",
@@ -266,6 +376,122 @@ const levelTwoAnnotations: FloorAnnotation[] = [
   },
 ];
 
+const levelTwoClusters: FloorCluster[] = [
+  {
+    id: "g-02-02",
+    label: "g-02-02",
+    floorId: "L2",
+    coord: { x: 3, y: 1 },
+    cells: [
+      { x: 3, y: 1 },
+      { x: 3, y: 2 },
+    ],
+    kind: "rack",
+    summary: "H100 pod QSFP swap zone",
+    tags: ["optics", "qsfp"],
+  },
+  {
+    id: "g-02-03",
+    label: "g-02-03",
+    floorId: "L2",
+    coord: { x: 4, y: 1 },
+    cells: [
+      { x: 4, y: 1 },
+      { x: 4, y: 2 },
+    ],
+    kind: "rack",
+    summary: "GPU sled diagnostics",
+  },
+  {
+    id: "c-01-01",
+    label: "c-01-01",
+    floorId: "L2",
+    coord: { x: 7, y: 1 },
+    cells: [
+      { x: 7, y: 1 },
+      { x: 7, y: 2 },
+    ],
+    kind: "rack",
+    summary: "Mixed NVSwitch pod",
+    tags: ["nvlink"],
+  },
+  {
+    id: "c-01-02",
+    label: "c-01-02",
+    floorId: "L2",
+    coord: { x: 8, y: 1 },
+    cells: [
+      { x: 8, y: 1 },
+      { x: 8, y: 2 },
+    ],
+    kind: "rack",
+    summary: "Burst spool + spare capacity",
+  },
+  {
+    id: "bundle-44b",
+    label: "Bundle 44B",
+    floorId: "L2",
+    coord: { x: 4, y: 3 },
+    cells: [
+      { x: 3, y: 3 },
+      { x: 4, y: 3 },
+      { x: 5, y: 3 },
+    ],
+    kind: "rack",
+    summary: "Patch panel + labeling work zone",
+    tags: ["cabling"],
+  },
+  {
+    id: "delta-loop",
+    label: "Delta liquid loop",
+    floorId: "L2",
+    coord: { x: 4, y: 5 },
+    cells: [
+      { x: 4, y: 5 },
+      { x: 5, y: 5 },
+    ],
+    kind: "support",
+    summary: "Liquid manifold inspection point",
+    tags: ["cooling"],
+  },
+  {
+    id: "pod-j",
+    label: "Pod J sleds",
+    floorId: "L2",
+    coord: { x: 8, y: 6 },
+    cells: [
+      { x: 8, y: 6 },
+      { x: 9, y: 6 },
+    ],
+    kind: "rack",
+    summary: "GPU sled bumper install zone",
+    tags: ["hardware"],
+  },
+  {
+    id: "inventory-l2-cache",
+    label: "Fiber cache",
+    floorId: "L2",
+    coord: { x: 7, y: 6 },
+    cells: [{ x: 7, y: 6 }],
+    kind: "inventory",
+    summary: "Trunk harness + QSFP staging",
+    inventoryItems: ["fiber-kit", "qsfp"],
+  },
+  {
+    id: "elevator-l2",
+    label: "Lift A · GPU floor",
+    floorId: "L2",
+    coord: { x: 2, y: 5 },
+    cells: [
+      { x: 2, y: 5 },
+      { x: 2, y: 4 },
+    ],
+    kind: "support",
+    summary: "Vertical link to concourse + spine",
+    tags: ["elevator"],
+  },
+];
+
 const levelThreeAnnotations: FloorAnnotation[] = [
   {
     id: "spine-06",
@@ -300,6 +526,74 @@ const levelThreeAnnotations: FloorAnnotation[] = [
   },
 ];
 
+const levelThreeClusters: FloorCluster[] = [
+  {
+    id: "spine-06",
+    label: "Spine 6",
+    floorId: "L3",
+    coord: { x: 3, y: 4 },
+    cells: [
+      { x: 3, y: 4 },
+      { x: 3, y: 5 },
+    ],
+    kind: "rack",
+    summary: "QSFP uplink sled",
+    tags: ["optics"],
+  },
+  {
+    id: "cooling-manifold",
+    label: "Cooling manifold",
+    floorId: "L3",
+    coord: { x: 5, y: 4 },
+    cells: [
+      { x: 5, y: 4 },
+      { x: 5, y: 5 },
+    ],
+    kind: "support",
+    summary: "Loop pressure / delta loop",
+    tags: ["cooling"],
+  },
+  {
+    id: "rack-n09",
+    label: "Rack N09",
+    floorId: "L3",
+    coord: { x: 7, y: 3 },
+    cells: [
+      { x: 7, y: 3 },
+      { x: 7, y: 4 },
+    ],
+    kind: "rack",
+    summary: "Smart PDU install site",
+    tags: ["power"],
+  },
+  {
+    id: "inventory-l3-toolkit",
+    label: "Spine service locker",
+    floorId: "L3",
+    coord: { x: 5, y: 6 },
+    cells: [
+      { x: 5, y: 6 },
+      { x: 4, y: 6 },
+    ],
+    kind: "inventory",
+    summary: "Harness clamps + spare QSFP",
+    inventoryItems: ["qsfp", "install-kit"],
+  },
+  {
+    id: "elevator-l3",
+    label: "Lift A · spine",
+    floorId: "L3",
+    coord: { x: 2, y: 4 },
+    cells: [
+      { x: 2, y: 4 },
+      { x: 2, y: 3 },
+    ],
+    kind: "support",
+    summary: "Return to GPU or concourse",
+    tags: ["elevator"],
+  },
+];
+
 export const floorPlanFloors: FabricFloor[] = [
   {
     id: "L1",
@@ -308,6 +602,7 @@ export const floorPlanFloors: FabricFloor[] = [
     elevation: "Concourse (0 ft)",
     grid: levelOneGrid,
     annotations: levelOneAnnotations,
+    clusters: levelOneClusters,
     size: getSize(levelOneGrid),
     environmental: {
       temp: "21°C",
@@ -322,6 +617,7 @@ export const floorPlanFloors: FabricFloor[] = [
     elevation: "+1 floor",
     grid: levelTwoGrid,
     annotations: levelTwoAnnotations,
+    clusters: levelTwoClusters,
     size: getSize(levelTwoGrid),
     environmental: {
       temp: "27°C hot aisle",
@@ -336,6 +632,7 @@ export const floorPlanFloors: FabricFloor[] = [
     elevation: "+2 floors",
     grid: levelThreeGrid,
     annotations: levelThreeAnnotations,
+    clusters: levelThreeClusters,
     size: getSize(levelThreeGrid),
     environmental: {
       temp: "24°C",
@@ -345,170 +642,12 @@ export const floorPlanFloors: FabricFloor[] = [
   },
 ];
 
-export const technicianPathGraph: PathGraph = {
-  desk: {
-    id: "desk",
-    floorId: "L1",
-    coord: { x: 1, y: 1 },
-    label: "Ops desk",
-    type: "start",
-    action: "Check-in + briefing",
-    priority: "standard",
-    distanceMeters: 0,
-    links: ["patch-staging", "elevator-l1"],
+export const floorClusterIndex = floorPlanFloors.reduce<Record<string, FloorCluster>>(
+  (acc, floor) => {
+    floor.clusters?.forEach((cluster) => {
+      acc[cluster.id] = cluster;
+    });
+    return acc;
   },
-  "patch-staging": {
-    id: "patch-staging",
-    floorId: "L1",
-    coord: { x: 4, y: 3 },
-    label: "Patch staging",
-    type: "task",
-    action: "Assemble fiber kit",
-    priority: "high",
-    distanceMeters: 18,
-    links: ["desk", "elevator-l1"],
-  },
-  "elevator-l1": {
-    id: "elevator-l1",
-    floorId: "L1",
-    coord: { x: 2, y: 5 },
-    label: "Lift A (L1)",
-    type: "elevator",
-    action: "Move to GPU floor",
-    priority: "standard",
-    distanceMeters: 24,
-    links: ["desk", "patch-staging", "elevator-l2"],
-  },
-  "elevator-l2": {
-    id: "elevator-l2",
-    floorId: "L2",
-    coord: { x: 2, y: 5 },
-    label: "Lift A (L2)",
-    type: "elevator",
-    action: "Arrive on GPU floor",
-    priority: "standard",
-    distanceMeters: 32,
-    links: ["elevator-l1", "task-gpu-swap", "task-mix-pod", "l2-cache", "elevator-l3"],
-  },
-  "task-gpu-swap": {
-    id: "task-gpu-swap",
-    floorId: "L2",
-    coord: { x: 3, y: 1 },
-    label: "g-02-02",
-    type: "task",
-    action: "Swap QSFP + verify optics",
-    priority: "critical",
-    distanceMeters: 52,
-    links: ["elevator-l2", "task-mix-pod"],
-  },
-  "task-mix-pod": {
-    id: "task-mix-pod",
-    floorId: "L2",
-    coord: { x: 7, y: 1 },
-    label: "c-01-01",
-    type: "task",
-    action: "Reset NVSwitch fabric",
-    priority: "high",
-    distanceMeters: 68,
-    links: ["task-gpu-swap", "l2-cache"],
-  },
-  "l2-cache": {
-    id: "l2-cache",
-    floorId: "L2",
-    coord: { x: 7, y: 6 },
-    label: "Fiber cache",
-    type: "inventory",
-    action: "Pick spare harness",
-    priority: "standard",
-    distanceMeters: 82,
-    links: ["task-mix-pod", "elevator-l2"],
-  },
-  "elevator-l3": {
-    id: "elevator-l3",
-    floorId: "L3",
-    coord: { x: 2, y: 4 },
-    label: "Lift A (L3)",
-    type: "elevator",
-    action: "Ride to spine level",
-    priority: "standard",
-    distanceMeters: 104,
-    links: ["elevator-l2", "task-spine-repair", "task-cooling"],
-  },
-  "task-spine-repair": {
-    id: "task-spine-repair",
-    floorId: "L3",
-    coord: { x: 3, y: 4 },
-    label: "Spine 6",
-    type: "task",
-    action: "Install QSFP + test BER",
-    priority: "critical",
-    distanceMeters: 116,
-    links: ["elevator-l3", "task-cooling"],
-  },
-  "task-cooling": {
-    id: "task-cooling",
-    floorId: "L3",
-    coord: { x: 5, y: 4 },
-    label: "Cooling manifold",
-    type: "task",
-    action: "Check manifold pressure",
-    priority: "high",
-    distanceMeters: 126,
-    links: ["task-spine-repair", "elevator-l3"],
-  },
-};
-
-export const routePresets: Record<string, RouteSequence> = {
-  baseline: [
-    "desk",
-    "patch-staging",
-    "elevator-l1",
-    "elevator-l2",
-    "task-gpu-swap",
-    "task-mix-pod",
-    "l2-cache",
-    "elevator-l2",
-    "elevator-l3",
-    "task-spine-repair",
-    "task-cooling",
-    "elevator-l3",
-    "elevator-l1",
-    "desk",
-  ],
-  priority: [
-    "desk",
-    "patch-staging",
-    "elevator-l1",
-    "elevator-l2",
-    "task-gpu-swap",
-    "elevator-l2",
-    "elevator-l3",
-    "task-spine-repair",
-    "task-cooling",
-    "elevator-l3",
-    "task-mix-pod",
-    "l2-cache",
-    "elevator-l2",
-    "elevator-l1",
-    "desk",
-  ],
-  distance: [
-    "desk",
-    "patch-staging",
-    "elevator-l1",
-    "elevator-l2",
-    "task-gpu-swap",
-    "task-mix-pod",
-    "l2-cache",
-    "task-mix-pod",
-    "elevator-l2",
-    "elevator-l3",
-    "task-cooling",
-    "task-spine-repair",
-    "elevator-l3",
-    "elevator-l1",
-    "desk",
-  ],
-};
-
-export const routePresetsOrder = Object.keys(routePresets);
+  {},
+);

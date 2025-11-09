@@ -32,6 +32,27 @@ export type GridCoord = {
   y: number;
 };
 
+export type InventoryItem =
+  | "qsfp"
+  | "fiber-kit"
+  | "psu"
+  | "cooling-kit"
+  | "sensor"
+  | "install-kit"
+  | "diagnostic-pack";
+
+export type FloorCluster = {
+  id: string;
+  label: string;
+  floorId: string;
+  coord: GridCoord;
+  cells?: GridCoord[];
+  kind: "rack" | "inventory" | "ops" | "support" | "service";
+  summary?: string;
+  tags?: string[];
+  inventoryItems?: InventoryItem[];
+};
+
 export type FloorAnnotation = {
   id: string;
   floorId: string;
@@ -53,6 +74,7 @@ export type FabricFloor = {
     cols: number;
     rows: number;
   };
+  clusters?: FloorCluster[];
   environmental?: {
     temp?: string;
     airflow?: string;
