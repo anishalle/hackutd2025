@@ -8,6 +8,7 @@ import {
   PathNode,
   TileDefinition,
 } from "@/lib/floor-plan/types";
+import type { FacilityCoord } from "@/lib/floor-plan/pathfinding";
 
 type HoveredAnnotation = {
   type: "annotation";
@@ -33,6 +34,7 @@ type FloorPlanCanvasProps = {
   floor: FabricFloor;
   tileDefinitions: TileDefinition[];
   route: PathNode[];
+  path?: FacilityCoord[];
 };
 
 const CELL_SIZE = 44;
@@ -62,6 +64,7 @@ export function FloorPlanCanvas({
   floor,
   tileDefinitions,
   route,
+  path,
 }: FloorPlanCanvasProps) {
   const [hoveredItem, setHoveredItem] = useState<HoveredItem | null>(null);
 
@@ -76,6 +79,20 @@ export function FloorPlanCanvas({
   const width = cols * step;
   const height = rows * step;
   const annotations = floor.annotations ?? [];
+  const clusterLookup = useMemo(() => {
+    const clusters = floor.clusters ?? [];
+    const map = new Map<string, typeof clusters>();
+    clusters.forEach((cluster) => {
+      const cells = cluster.cells?.length ? cluster.cells : [cluster.coord];
+      cells.forEach((cell) => {
+        const key = toKey(cell.x, cell.y);
+        const existing = map.get(key) ?? [];
+        existing.push(cluster);
+        map.set(key, existing);
+      });
+    });
+    return map;
+  }, [floor.clusters]);
 
   const nodesOnFloor = route.filter((node) => node.floorId === floor.id);
 
@@ -88,47 +105,37 @@ export function FloorPlanCanvas({
   );
 
   const pathSegments = useMemo(() => {
-    const segments: Array<{
-      key: string;
-      points: { x: number; y: number }[];
-      priority: keyof typeof priorityStroke;
-    }> = [];
+    if (!path || path.length < 2) return [];
+    const segments: Array<{ key: string; points: { x: number; y: number }[] }> =
+      [];
+    let currentSegment: PathNode["coord"][] = [];
 
-    const buildOrthPoints = (
-      startCoord: PathNode["coord"],
-      endCoord: PathNode["coord"],
-    ) => {
-      const startCenter = centerFor(startCoord);
-      const endCenter = centerFor(endCoord);
-
-      if (startCoord.x === endCoord.x || startCoord.y === endCoord.y) {
-        return [startCenter, endCenter];
+    const flushSegment = () => {
+      if (currentSegment.length < 2) {
+        currentSegment = [];
+        return;
       }
-
-      const cornerCoord = { x: endCoord.x, y: startCoord.y };
-      const cornerCenter = centerFor(cornerCoord);
-      return [startCenter, cornerCenter, endCenter];
+      segments.push({
+        key: `${floor.id}-${segments.length}`,
+        points: currentSegment.map((coord) => centerFor(coord)),
+      });
+      currentSegment = [];
     };
 
-    for (let i = 0; i < route.length - 1; i += 1) {
-      const current = route[i];
-      const next = route[i + 1];
-      if (!current || !next) continue;
-      if (current.floorId !== floor.id || next.floorId !== floor.id) continue;
-
-      const points = buildOrthPoints(current.coord, next.coord);
-      const priority =
-        (current.priority as keyof typeof priorityStroke) ?? "standard";
-
-      segments.push({
-        key: `${current.id}-${next.id}-${current.floorId}`,
-        points,
-        priority,
-      });
-    }
+    path.forEach((step, index) => {
+      if (step.floorId !== floor.id) {
+        flushSegment();
+        return;
+      }
+      currentSegment.push(step.coord);
+      const next = path[index + 1];
+      if (!next || next.floorId !== floor.id) {
+        flushSegment();
+      }
+    });
 
     return segments;
-  }, [centerFor, floor.id, route]);
+  }, [centerFor, floor.id, path]);
 
   const hoveredInfo = (() => {
     if (!hoveredItem) return null;
@@ -160,14 +167,35 @@ export function FloorPlanCanvas({
       if (hoveredItem.data.distanceMeters)
         lines.push(`Distance: ${Math.round(hoveredItem.data.distanceMeters)} m`);
     } else if (hoveredItem.type === "tile") {
-      title = hoveredItem.data.tile.label;
-      subtitle = `cell (${hoveredItem.data.coord.x}, ${hoveredItem.data.coord.y})`;
-      accent = hoveredItem.data.tile.border ?? accent;
-      const diag = hoveredItem.data.tile.slurmDiagnostics;
-      if (diag) {
-        lines.push(`Allocation: ${diag.allocation}`);
-        lines.push(`Thermals: ${diag.thermals}`);
-        if (diag.notes) lines.push(diag.notes);
+      const coordKey = toKey(hoveredItem.data.coord.x, hoveredItem.data.coord.y);
+      const matchedClusters = clusterLookup.get(coordKey);
+      if (matchedClusters && matchedClusters.length > 0) {
+        const primary = matchedClusters[0];
+        title = primary.label;
+        subtitle = `Cluster · ${primary.kind}`;
+        accent = annotationColors.task;
+        if (primary.summary) lines.push(primary.summary);
+        lines.push(
+          `cell (${hoveredItem.data.coord.x}, ${hoveredItem.data.coord.y})`,
+        );
+        if (primary.tags && primary.tags.length > 0) {
+          lines.push(`Tags: ${primary.tags.join(", ")}`);
+        }
+        if (primary.inventoryItems && primary.inventoryItems.length > 0) {
+          lines.push(`Stock: ${primary.inventoryItems.join(", ")}`);
+        }
+        const tile = hoveredItem.data.tile;
+        lines.push(`${tile.label}: ${tile.description}`);
+      } else {
+        title = hoveredItem.data.tile.label;
+        subtitle = `cell (${hoveredItem.data.coord.x}, ${hoveredItem.data.coord.y})`;
+        accent = hoveredItem.data.tile.border ?? accent;
+        const diag = hoveredItem.data.tile.slurmDiagnostics;
+        if (diag) {
+          lines.push(`Allocation: ${diag.allocation}`);
+          lines.push(`Thermals: ${diag.thermals}`);
+          if (diag.notes) lines.push(diag.notes);
+        }
       }
     }
 
@@ -274,23 +302,20 @@ export function FloorPlanCanvas({
             }),
           )}
 
-          {pathSegments.map(({ key, points, priority }) => {
-            const style = priorityStroke[priority];
-            return (
-              <polyline
-                key={key}
-                points={points.map((point) => `${point.x},${point.y}`).join(" ")}
-                fill="none"
-                stroke={style.stroke}
-                strokeWidth={4}
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                markerEnd={`url(#arrow-${floor.id})`}
-                filter="url(#glow)"
-                opacity={0.9}
-              />
-            );
-          })}
+          {pathSegments.map(({ key, points }, index) => (
+            <polyline
+              key={`${key}-${index}`}
+              points={points.map((point) => `${point.x},${point.y}`).join(" ")}
+              fill="none"
+              stroke="#38bdf8"
+              strokeWidth={4}
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              markerEnd={`url(#arrow-${floor.id})`}
+              filter="url(#glow)"
+              opacity={0.85}
+            />
+          ))}
 
           {nodesOnFloor.map((node) => {
             const { x, y } = centerFor(node.coord);

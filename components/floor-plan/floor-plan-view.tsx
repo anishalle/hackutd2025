@@ -2,40 +2,88 @@
 
 import { useMemo, useState } from "react";
 
+import { BundlePicker } from "@/components/floor-plan/bundle-picker";
 import { FloorPlanCanvas } from "@/components/floor-plan/floor-plan-canvas";
 import { FloorPlanLegend } from "@/components/floor-plan/floor-plan-legend";
 import { FloorSelector } from "@/components/floor-plan/floor-selector";
 import { RoutePanel } from "@/components/floor-plan/route-panel";
-import { useTechnicianRoute } from "@/components/floor-plan/use-technician-route";
+import {
+  buildTechnicianBundles,
+  generateTechnicianRoute,
+  type TechnicianBundle,
+} from "@/lib/floor-plan/technician-routing";
+import { floorClusterIndex } from "@/lib/floor-plan/data";
+import { fabricTicketBacklog } from "@/lib/tickets/data";
+import type { FabricTicket } from "@/lib/tickets/types";
 import {
   FabricFloor,
-  PathGraph,
-  RouteSequence,
   TileDefinition,
 } from "@/lib/floor-plan/types";
 
 type FloorPlanViewProps = {
   floors: FabricFloor[];
   tiles: TileDefinition[];
-  graph: PathGraph;
-  presets: Record<string, RouteSequence>;
 };
 
 export function FloorPlanView({
   floors,
   tiles,
-  graph,
-  presets,
 }: FloorPlanViewProps) {
   const [activeFloorId, setActiveFloorId] = useState(floors[0]?.id ?? "");
   const activeFloor =
     floors.find((floor) => floor.id === activeFloorId) ?? floors[0];
 
-  const { route, activePreset, shell } = useTechnicianRoute(
-    graph,
-    presets,
-    "baseline",
-  );
+  const [cachedTickets] = useState<FabricTicket[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      const raw = window.localStorage.getItem("nmc.emailTickets");
+      if (!raw) return [];
+      return JSON.parse(raw) as FabricTicket[];
+    } catch (error) {
+      console.warn("Failed to load cached technician tickets", error);
+      return [];
+    }
+  });
+  const [selectedBundleId, setSelectedBundleId] = useState<string | null>(null);
+
+  const tickets = useMemo(() => {
+    const seen = new Set<string>();
+    return [...cachedTickets, ...fabricTicketBacklog].filter((ticket) => {
+      if (seen.has(ticket.id)) return false;
+      seen.add(ticket.id);
+      return true;
+    });
+  }, [cachedTickets]);
+
+  const technicianBundles = useMemo(() => {
+    const bundles = buildTechnicianBundles(tickets, floorClusterIndex);
+    return [...bundles].sort((a, b) => b.score - a.score);
+  }, [tickets]);
+
+  const activeBundle: TechnicianBundle | null = useMemo(() => {
+    if (technicianBundles.length === 0) return null;
+    if (
+      selectedBundleId &&
+      technicianBundles.some((bundle) => bundle.id === selectedBundleId)
+    ) {
+      return technicianBundles.find((bundle) => bundle.id === selectedBundleId) ?? null;
+    }
+    return technicianBundles[0] ?? null;
+  }, [technicianBundles, selectedBundleId]);
+
+  const routeResult = useMemo(() => {
+    if (!activeBundle) return null;
+    return generateTechnicianRoute({
+      bundle: activeBundle,
+      floors,
+      clusterIndex: floorClusterIndex,
+    });
+  }, [activeBundle, floors]);
+
+  const route = routeResult?.stops ?? [];
+  const technicianPath = routeResult?.path ?? [];
+  const unresolvedTasks = routeResult?.unresolvedTasks ?? [];
+  const totalDistance = routeResult?.totalDistance ?? 0;
 
   const activeInventory = useMemo(() => {
     if (!activeFloor?.annotations) return [];
@@ -55,10 +103,10 @@ export function FloorPlanView({
             Technician routing + HPC floor state
           </h1>
           <p className="max-w-3xl text-sm text-white/70">
-            Visualize hot/cold aisles, inventory caches, and technician paths
-            across all three levels. Update the pathfinding preset to simulate
-            priority-based or shortest-walk runs without touching the
-            underlying grid definitions.
+            Visualize hot/cold aisles, inventory caches, and technician loops
+            across all three levels. Pick any bundled set of dispatch tickets to
+            generate a dependency-aware walk order that respects inventory pulls,
+            elevator penalties, and Ops desk hand-off.
           </p>
         </header>
 
@@ -68,6 +116,12 @@ export function FloorPlanView({
           onSelect={setActiveFloorId}
         />
 
+        <BundlePicker
+          bundles={technicianBundles}
+          selectedId={activeBundle?.id ?? null}
+          onSelect={(id) => setSelectedBundleId(id)}
+        />
+
         <div className="grid gap-6 lg:grid-cols-[minmax(0,2fr)_minmax(320px,1fr)]">
           {activeFloor ? (
             <FloorPlanCanvas
@@ -75,6 +129,7 @@ export function FloorPlanView({
               floor={activeFloor}
               tileDefinitions={tiles}
               route={route}
+              path={technicianPath}
             />
           ) : null}
 
@@ -84,8 +139,9 @@ export function FloorPlanView({
         <div className="grid gap-6 lg:grid-cols-2">
           <RoutePanel
             route={route}
-            activePreset={activePreset ?? "baseline"}
-            shell={shell}
+            bundle={activeBundle}
+            totalDistance={totalDistance}
+            unresolvedTasks={unresolvedTasks}
           />
 
           <div className="rounded-3xl border border-white/5 bg-slate-950/70 p-5">
