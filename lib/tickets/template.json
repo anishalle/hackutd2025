@@ -1,0 +1,90 @@
+{
+  // string, any unique ticket reference
+  "id": "WO-0000",
+
+  // string, any short title
+  "title": "Ticket title",
+
+  // string, any queue label
+  "queue": "Critical path",
+
+  // enum string, one of: critical | high | medium | low
+  "severity": "high",
+
+  // enum string, one of: admin | technician
+  "team": "admin",
+
+  // enum string, one of: known | ambiguous | dispatch
+  "kind": "known",
+
+  // string, any owner name
+  "owner": "Crew Alpha",
+
+  // string, any status text
+  "status": "Queued",
+
+  // string, any ETA description
+  "eta": "00:30",
+
+  // string[], tags allowed: cabling, compute, cooling, firmware, hardware, inspection, install, interconnect, maintenance, mapping, network, optics, parallel, permissions, power, provisioning, redundancy, robotics, security, sensors, signal, software, storage, telemetry, vlan
+  "tags": ["power", "redundancy"],
+
+  // enum string, one of: manual | slack | email
+  "channel": "slack",
+
+  // string, any location text
+  "location": "Austin",
+
+  // string, any optional customer; omit if not applicable
+  "customer": "Redline Motors",
+
+  // string, any summary
+  "summary": "High level summary.",
+
+  // string, any optional details
+  "details": "Long-form details.",
+
+  // string, any optional signal description (investigations)
+  "signal": "Signal detail.",
+
+  // TicketHypothesis[] optional; label string (any), confidence number 0-100
+  "hypotheses": [
+    { "label": "Potential cause", "confidence": 42 }
+  ],
+
+  // boolean, optional parallel flag
+  "parallelReady": true,
+
+  // string, optional parallel group identifier
+  "parallelGroup": "A",
+
+  // boolean, optional fast fix availability
+  "fastFixAvailable": false,
+
+  // TicketAction[] optional; label string (any), description string (any), cta optional string (any)
+  "actions": [
+    {
+      "label": "Run automation",
+      "description": "What the action does.",
+      "cta": "Run now"
+    }
+  ],
+
+  // string[] optional; any customer names
+  "affectedCustomers": ["Tenant A"],
+
+  // string[] optional; any system names
+  "affectedSystems": ["Rack P44 power shelf"],
+
+  // string[] optional; any server identifiers
+  "affectedServers": ["p44-gpu-01"],
+
+  // string, any workload description
+  "workload": "Workload summary",
+
+  // string, optional floor description
+  "floor": "L3 · Aisle 6",
+
+  // string, optional distance description
+  "distance": "58m"
+}
