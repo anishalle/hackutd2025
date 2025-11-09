@@ -6,6 +6,7 @@ import {
   InventoryTable,
   type InventoryAsset,
 } from "@/components/inventory/inventory-table";
+import { FilterMultiSelect } from "@/components/tickets/filter-multi-select";
 import { LocationSwitcher } from "@/components/layout/location-switcher";
 import { fabricLocations } from "@/lib/locations";
 
@@ -78,23 +79,43 @@ const assets: InventoryAsset[] = [
   },
 ];
 
-const statusFilters: Array<InventoryAsset["status"] | "all"> = [
-  "all",
-  "in_use",
-  "mix",
-  "idle",
-  "drained",
-];
-
 export default function InventoryPage() {
-  const [status, setStatus] = useState<(typeof statusFilters)[number]>("all");
-  const [spareOnly, setSpareOnly] = useState(false);
+  const [selectedStatus, setSelectedStatus] = useState<InventoryAsset["status"][]>(
+    [],
+  );
+  const [selectedRole, setSelectedRole] = useState<Array<"primary" | "spare">>([]);
   const [query, setQuery] = useState("");
+
+  const statusOptions = useMemo(
+    () =>
+      Array.from(
+        new Set(assets.map((asset) => asset.status)),
+      ).map((status) => ({
+        value: status,
+        label: status,
+      })),
+    [],
+  );
+
+  const roleOptions = [
+    { value: "primary", label: "primary" },
+    { value: "spare", label: "spare" },
+  ];
 
   const filteredAssets = useMemo(() => {
     return assets.filter((asset) => {
-      if (status !== "all" && asset.status !== status) return false;
-      if (spareOnly && !asset.spare) return false;
+      if (
+        selectedStatus.length > 0 &&
+        !selectedStatus.includes(asset.status)
+      ) {
+        return false;
+      }
+      if (
+        selectedRole.length > 0 &&
+        !selectedRole.includes(asset.spare ? "spare" : "primary")
+      ) {
+        return false;
+      }
       if (
         query &&
         !`${asset.item} ${asset.id} ${asset.shelf} ${asset.floor}`
@@ -105,7 +126,7 @@ export default function InventoryPage() {
       }
       return true;
     });
-  }, [status, spareOnly, query]);
+  }, [selectedStatus, selectedRole, query]);
 
   return (
     <div className="min-h-screen bg-[#01040b] text-white">
@@ -148,32 +169,24 @@ export default function InventoryPage() {
         </header>
 
         <section className="space-y-4 rounded-3xl border border-white/10 bg-white/5 p-6">
-          <div className="flex flex-wrap items-center justify-between gap-4">
-            <div className="flex flex-wrap items-center gap-2">
-              {statusFilters.map((filter) => (
-                <button
-                  key={filter}
-                  onClick={() => setStatus(filter)}
-                  className={`rounded-full border px-3 py-1 text-xs uppercase tracking-wide transition ${
-                    status === filter
-                      ? "border-cyan-400/60 bg-cyan-400/10 text-cyan-100"
-                      : "border-white/10 text-white/60 hover:text-white"
-                  }`}
-                >
-                  {filter}
-                </button>
-              ))}
-            </div>
-            <div className="flex items-center gap-3">
-              <label className="flex cursor-pointer items-center gap-2 text-xs uppercase tracking-[0.3em] text-white/60">
-                <input
-                  type="checkbox"
-                  checked={spareOnly}
-                  onChange={(e) => setSpareOnly(e.target.checked)}
-                  className="h-4 w-4 rounded border border-white/30 bg-transparent"
-                />
-                Spare only
-              </label>
+          <div className="flex flex-wrap items-center gap-4">
+            <FilterMultiSelect
+              label="Status"
+              options={statusOptions}
+              selected={selectedStatus}
+              onChange={(values) =>
+                setSelectedStatus(values as InventoryAsset["status"][])
+              }
+            />
+            <FilterMultiSelect
+              label="Role"
+              options={roleOptions}
+              selected={selectedRole}
+              onChange={(values) =>
+                setSelectedRole(values as Array<"primary" | "spare">)
+              }
+            />
+            <div className="ml-auto flex items-center">
               <input
                 type="text"
                 value={query}
