@@ -3,7 +3,6 @@
 import { CablingVisualizer } from "@/components/dashboard/cabling-visualizer";
 import { CommunicationFeed } from "@/components/dashboard/communication-feed";
 import { InventoryPanel } from "@/components/dashboard/inventory-panel";
-import { LocationTabs } from "@/components/dashboard/location-tabs";
 import { MapPlaceholder } from "@/components/dashboard/map-placeholder";
 import { MetricGrid } from "@/components/dashboard/metric-grid";
 import { ParallelWorkloads } from "@/components/dashboard/parallel-workloads";
@@ -11,29 +10,8 @@ import { QuickAutomation } from "@/components/dashboard/quick-automation";
 import { SectionCard } from "@/components/dashboard/section-card";
 import { TechnicianQueue } from "@/components/dashboard/technician-queue";
 import { TicketBoard } from "@/components/dashboard/ticket-board";
-
-const locations = [
-  {
-    id: "demo",
-    name: "Austin Demo Fabric",
-    status: "Live production",
-    detail: "12MW · 1,024 GPUs",
-  },
-  {
-    id: "phx",
-    name: "Phoenix West",
-    status: "Coming soon",
-    detail: "Awaiting uplink",
-    disabled: true,
-  },
-  {
-    id: "dal",
-    name: "Dallas Edge",
-    status: "In design",
-    detail: "Floor plan pending",
-    disabled: true,
-  },
-];
+import { LocationSwitcher } from "@/components/layout/location-switcher";
+import { fabricLocations } from "@/lib/locations";
 
 const metrics = [
   {
@@ -256,15 +234,10 @@ export default function Home() {
                 across NVIDIA-powered fabrics.
               </p>
             </div>
-            <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-3 text-right text-sm text-white/70">
-              <p className="text-xs uppercase tracking-[0.3em] text-white/50">
-                Demo Fabric
-              </p>
-              <p className="text-lg font-semibold text-white">Austin · Live</p>
-              <p>Last sync 08:52 CST</p>
+            <div className="w-full max-w-xs flex-1">
+              <LocationSwitcher locations={fabricLocations} initialId="demo" />
             </div>
           </div>
-          <LocationTabs locations={locations} activeId="demo" />
         </header>
 
         <MetricGrid metrics={metrics} />
