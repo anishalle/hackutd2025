@@ -1,0 +1,161 @@
+[
+  {
+    "name": "Mouni",
+    "messages": [
+      {
+        "id": 1,
+        "contactId": "mounikasaka7@gmail.com",
+        "type": "received",
+        "text": "https://github.com/mounikasaka1/hackai",
+        "timestamp": "2025-04-19T12:53:07.000Z",
+        "highlighted": false
+      }
+    ]
+  },
+  {
+    "name": "Sanya",
+    "messages": [
+      {
+        "id": 2,
+        "contactId": "sanyahegde7@gmail.com",
+        "type": "received",
+        "text": "https://api.utdnebula.com/swagger/index.html",
+        "timestamp": "2025-04-19T13:17:06.000Z",
+        "highlighted": false
+      }
+    ]
+  },
+  {
+    "name": "Shreya",
+    "messages": [
+      {
+        "id": 3,
+        "contactId": "+14802078487",
+        "type": "received",
+        "text": "https://devpost.com/software/905514/joins/UqQLYl1jpnIeot5C8QsQkQ",
+        "timestamp": "2025-04-19T22:12:24.000Z",
+        "highlighted": false
+      },
+      {
+        "id": 4,
+        "contactId": "+14802078487",
+        "type": "received",
+        "text": "You're so annoying im gonna kill you",
+        "timestamp": "2025-04-19T21:34:36.000Z",
+        "highlighted": false
+      },
+      {
+        "id": 5,
+        "contactId": "+14802078487",
+        "type": "received",
+        "text": "Hiiiii",
+        "timestamp": "2025-04-19T21:32:49.000Z",
+        "highlighted": false
+      },
+      {
+        "id": 6,
+        "contactId": "+14802078487",
+        "type": "received",
+        "text": "Hey man",
+        "timestamp": "2025-04-19T21:31:09.000Z",
+        "highlighted": false
+      },
+      {
+        "id": 7,
+        "contactId": "+14802078487",
+        "type": "sent",
+        "text": "",
+        "timestamp": "2025-04-19T21:07:33.000Z",
+        "highlighted": false
+      },
+      {
+        "id": 8,
+        "contactId": "+14802078487",
+        "type": "received",
+        "text": "ShreyaAkula",
+        "timestamp": "2025-04-19T14:13:23.000Z",
+        "highlighted": false
+      },
+      {
+        "id": 9,
+        "contactId": "+14802078487",
+        "type": "received",
+        "text": "internship!!!",
+        "timestamp": "2025-04-19T11:11:20.000Z",
+        "highlighted": false
+      },
+      {
+        "id": 10,
+        "contactId": "+14802078487",
+        "type": "received",
+        "text": "And the prizes are even worse ...",
+        "timestamp": "2025-04-19T11:11:10.000Z",
+        "highlighted": false
+      },
+      {
+        "id": 11,
+        "contactId": "+14802078487",
+        "type": "received",
+        "text": "The prompts suck",
+        "timestamp": "2025-04-19T11:11:00.000Z",
+        "highlighted": false
+      },
+      {
+        "id": 12,
+        "contactId": "+14802078487",
+        "type": "sent",
+        "text": "Other side",
+        "timestamp": "2025-04-19T11:00:11.000Z",
+        "highlighted": false
+      },
+      {
+        "id": 13,
+        "contactId": "+14802078487",
+        "type": "sent",
+        "text": "Look here",
+        "timestamp": "2025-04-19T11:00:09.000Z",
+        "highlighted": false
+      },
+      {
+        "id": 14,
+        "contactId": "+14802078487",
+        "type": "sent",
+        "text": "Left side",
+        "timestamp": "2025-04-19T11:00:04.000Z",
+        "highlighted": false
+      },
+      {
+        "id": 15,
+        "contactId": "+14802078487",
+        "type": "received",
+        "text": "Where r u guys sitting",
+        "timestamp": "2025-04-19T10:59:56.000Z",
+        "highlighted": false
+      },
+      {
+        "id": 16,
+        "contactId": "+14802078487",
+        "type": "sent",
+        "text": "But it's not almost done u can come",
+        "timestamp": "2025-04-19T10:54:35.000Z",
+        "highlighted": false
+      },
+      {
+        "id": 17,
+        "contactId": "+14802078487",
+        "type": "sent",
+        "text": "This is so boring",
+        "timestamp": "2025-04-19T10:54:30.000Z",
+        "highlighted": false
+      },
+      {
+        "id": 18,
+        "contactId": "+14802078487",
+        "type": "received",
+        "text": "Are they almost done or should I come?",
+        "timestamp": "2025-04-19T10:54:24.000Z",
+        "highlighted": false
+      }
+    ]
+  }
+]
