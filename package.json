@@ -9,9 +9,12 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "googleapis": "^134.0.0",
+    "mongodb": "^6.9.0",
+    "next": "16.0.1",
+    "openai": "^4.77.4",
     "react": "19.2.0",
-    "react-dom": "19.2.0",
-    "next": "16.0.1"
+    "react-dom": "19.2.0"
   },
   "devDependencies": {
     "typescript": "^5",
