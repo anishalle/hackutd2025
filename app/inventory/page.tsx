@@ -1,132 +1,102 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import {
   InventoryTable,
-  type InventoryAsset,
+  type InventoryItem,
 } from "@/components/inventory/inventory-table";
 import { FilterMultiSelect } from "@/components/tickets/filter-multi-select";
 import { LocationSwitcher } from "@/components/layout/location-switcher";
 import { fabricLocations } from "@/lib/locations";
 
-const assets: InventoryAsset[] = [
-  {
-    id: "INV-401",
-    item: "QSFP-DD 400G optic",
-    shelf: "A3-04",
-    floor: "L3 · Spine bay",
-    status: "in_use",
-    spare: false,
-    timeInUse: "412 h",
-    utilization: "82%",
-    slurmState: "ALLOC",
-  },
-  {
-    id: "INV-402",
-    item: "Power shelf (N+1)",
-    shelf: "P1-11",
-    floor: "L2 · Power room",
-    status: "mix",
-    spare: true,
-    timeInUse: "112 h",
-    utilization: "61%",
-    slurmState: "MIX",
-  },
-  {
-    id: "INV-403",
-    item: "Cold plate gasket kit",
-    shelf: "C2-07",
-    floor: "L2 · Cold row",
-    status: "idle",
-    spare: true,
-    timeInUse: "18 h",
-    utilization: "5%",
-    slurmState: "IDLE",
-  },
-  {
-    id: "INV-404",
-    item: "NVLink harness",
-    shelf: "N1-02",
-    floor: "L1 · Pod staging",
-    status: "drained",
-    spare: false,
-    timeInUse: "672 h",
-    utilization: "offline",
-    slurmState: "DRAIN",
-  },
-  {
-    id: "INV-405",
-    item: "H100 sled assembly",
-    shelf: "H4-12",
-    floor: "L3 · Build lab",
-    status: "in_use",
-    spare: false,
-    timeInUse: "96 h",
-    utilization: "66%",
-    slurmState: "ALLOC",
-  },
-  {
-    id: "INV-406",
-    item: "Fiber trunk (MTP-24)",
-    shelf: "F5-03",
-    floor: "L2 · Cable mezzanine",
-    status: "idle",
-    spare: true,
-    timeInUse: "0 h",
-    utilization: "—",
-    slurmState: "IDLE",
-  },
-];
+const searchKeys: Array<keyof InventoryItem> = ["name", "category"];
 
 export default function InventoryPage() {
-  const [selectedStatus, setSelectedStatus] = useState<InventoryAsset["status"][]>(
-    [],
-  );
-  const [selectedRole, setSelectedRole] = useState<Array<"primary" | "spare">>([]);
+  const [items, setItems] = useState<InventoryItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [selectedStatus, setSelectedStatus] = useState<
+    InventoryItem["status"][]
+  >([]);
+  const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [query, setQuery] = useState("");
 
-  const statusOptions = useMemo(
-    () =>
-      Array.from(
-        new Set(assets.map((asset) => asset.status)),
-      ).map((status) => ({
+  useEffect(() => {
+    const fetchInventory = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await fetch("/api/inventory");
+        if (!res.ok) throw new Error("Failed to fetch inventory");
+        const data = (await res.json()) as InventoryItem[];
+        setItems(data);
+      } catch (err) {
+        console.error("Inventory fetch failed", err);
+        setError("Unable to load inventory from MongoDB");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchInventory();
+  }, []);
+
+  const statusOptions = useMemo(() => {
+    return Array.from(new Set(items.map((item) => item.status))).map(
+      (status) => ({
         value: status,
         label: status,
-      })),
-    [],
-  );
+      }),
+    );
+  }, [items]);
 
-  const roleOptions = [
-    { value: "primary", label: "primary" },
-    { value: "spare", label: "spare" },
-  ];
+  const categoryOptions = useMemo(() => {
+    return Array.from(new Set(items.map((item) => item.category))).map(
+      (category) => ({
+        value: category,
+        label: category,
+      }),
+    );
+  }, [items]);
 
-  const filteredAssets = useMemo(() => {
-    return assets.filter((asset) => {
+  const filteredItems = useMemo(() => {
+    return items.filter((item) => {
       if (
         selectedStatus.length > 0 &&
-        !selectedStatus.includes(asset.status)
+        !selectedStatus.includes(item.status)
       ) {
         return false;
       }
       if (
-        selectedRole.length > 0 &&
-        !selectedRole.includes(asset.spare ? "spare" : "primary")
+        selectedCategories.length > 0 &&
+        !selectedCategories.includes(item.category)
       ) {
         return false;
       }
-      if (
-        query &&
-        !`${asset.item} ${asset.id} ${asset.shelf} ${asset.floor}`
-          .toLowerCase()
-          .includes(query.toLowerCase())
-      ) {
-        return false;
+      if (query.trim().length > 0) {
+        const haystack = [
+          ...searchKeys.map((key) => String(item[key] ?? "")),
+          item.location?.floor ?? "",
+          item.location?.shelf ?? "",
+        ]
+          .join(" ")
+          .toLowerCase();
+        if (!haystack.includes(query.toLowerCase())) {
+          return false;
+        }
       }
       return true;
     });
-  }, [selectedStatus, selectedRole, query]);
+  }, [items, selectedStatus, selectedCategories, query]);
+
+  const refillCount = filteredItems.filter((item) =>
+    ["Warning", "Critical", "Depleted"].includes(item.depletionStatus),
+  ).length;
+
+  const spareCount = filteredItems.filter(
+    (item) => item.status === "spare",
+  ).length;
 
   return (
     <div className="min-h-screen bg-[#01040b] text-white">
@@ -138,10 +108,12 @@ export default function InventoryPage() {
               <p className="text-xs uppercase tracking-[0.4em] text-cyan-300/80">
                 Inventory
               </p>
-              <h1 className="text-4xl font-semibold">Predictive shelves</h1>
+              <h1 className="text-4xl font-semibold">
+                Predictive shelves · live Mongo feed
+              </h1>
               <p className="mt-2 max-w-2xl text-base text-white/70">
-                Track parts across floors, SLURM states, and spare policies in a single
-                table.
+                Track high-velocity spares, thresholds, and depletion signals
+                across the fabric without exposing site metadata.
               </p>
             </div>
             <div className="w-full max-w-xs flex-1">
@@ -150,9 +122,21 @@ export default function InventoryPage() {
           </div>
           <div className="grid gap-4 sm:grid-cols-3">
             {[
-              { label: "Shelves tracked", value: "64", sub: "Austin fabric" },
-              { label: "Spare coverage", value: "92%", sub: "meets policy" },
-              { label: "Drained assets", value: "4", sub: "awaiting swaps" },
+              {
+                label: "Tracked items",
+                value: filteredItems.length.toString().padStart(2, "0"),
+                sub: `${items.length} total`,
+              },
+              {
+                label: "Needs refill",
+                value: refillCount.toString().padStart(2, "0"),
+                sub: "Warning · Critical · Depleted",
+              },
+              {
+                label: "Spare-ready",
+                value: spareCount.toString().padStart(2, "0"),
+                sub: "Deployable now",
+              },
             ].map((stat) => (
               <div
                 key={stat.label}
@@ -175,28 +159,34 @@ export default function InventoryPage() {
               options={statusOptions}
               selected={selectedStatus}
               onChange={(values) =>
-                setSelectedStatus(values as InventoryAsset["status"][])
+                setSelectedStatus(
+                  values as InventoryItem["status"][],
+                )
               }
             />
             <FilterMultiSelect
-              label="Role"
-              options={roleOptions}
-              selected={selectedRole}
-              onChange={(values) =>
-                setSelectedRole(values as Array<"primary" | "spare">)
-              }
+              label="Category"
+              options={categoryOptions}
+              selected={selectedCategories}
+              onChange={setSelectedCategories}
             />
             <div className="ml-auto flex items-center">
               <input
                 type="text"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder="Search asset or shelf"
+                placeholder="Search asset, category, floor, or shelf"
                 className="rounded-full border border-white/10 bg-black/30 px-4 py-2 text-sm text-white outline-none placeholder:text-white/40"
               />
             </div>
           </div>
-          <InventoryTable assets={filteredAssets} />
+          {error ? (
+            <div className="rounded-2xl border border-rose-500/40 bg-rose-500/10 px-4 py-3 text-sm text-rose-100">
+              {error}
+            </div>
+          ) : (
+            <InventoryTable items={filteredItems} loading={loading} />
+          )}
         </section>
       </div>
     </div>
