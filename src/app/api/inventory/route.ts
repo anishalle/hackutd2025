@@ -27,7 +27,6 @@ function getDepletionStatus(item: InventoryItem) {
   if (avgWeeklyUsage <= 0) return "Healthy";
 
 
-  // Trend adjustment
   let adjustedUsage = avgWeeklyUsage;
   if (usageHistory.length >= 2) {
     const trend = usageHistory[usageHistory.length - 1] - usageHistory[0];

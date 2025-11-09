@@ -1,43 +1,371 @@
 [
-  { "name": "NVIDIA A100 GPU", "category": "GPU", "location": "NMC Demo DC", "quantity": 6, "avgWeeklyUsage": 3, "threshold": 4 },
-  { "name": "AMD EPYC CPU", "category": "CPU", "location": "NMC Demo DC", "quantity": 12, "avgWeeklyUsage": 5, "threshold": 6 },
-  { "name": "Intel Xeon CPU", "category": "CPU", "location": "NMC Demo DC", "quantity": 8, "avgWeeklyUsage": 4, "threshold": 4 },
-  { "name": "DDR5 ECC RAM 64GB", "category": "Memory", "location": "NMC Demo DC", "quantity": 20, "avgWeeklyUsage": 10, "threshold": 8 },
-  { "name": "NVMe SSD 2TB", "category": "Storage", "location": "NMC Demo DC", "quantity": 14, "avgWeeklyUsage": 4, "threshold": 5 },
-  { "name": "HDD 8TB Enterprise", "category": "Storage", "location": "NMC Demo DC", "quantity": 10, "avgWeeklyUsage": 3, "threshold": 4 },
-  { "name": "Power Supply Unit 1600W", "category": "Power", "location": "NMC Demo DC", "quantity": 7, "avgWeeklyUsage": 2, "threshold": 3 },
-  { "name": "Cooling Fan Module", "category": "Cooling", "location": "NMC Demo DC", "quantity": 15, "avgWeeklyUsage": 5, "threshold": 5 },
-  { "name": "RAID Controller Card", "category": "Controller", "location": "NMC Demo DC", "quantity": 5, "avgWeeklyUsage": 1, "threshold": 2 },
-  { "name": "Motherboard Assembly", "category": "Motherboard", "location": "NMC Demo DC", "quantity": 4, "avgWeeklyUsage": 1, "threshold": 2 },
-  { "name": "10 GbE Fiber Cable", "category": "Cable", "location": "NMC Demo DC", "quantity": 60, "avgWeeklyUsage": 15, "threshold": 20 },
-  { "name": "100 GbE QSFP28 Cable", "category": "Cable", "location": "NMC Demo DC", "quantity": 30, "avgWeeklyUsage": 10, "threshold": 12 },
-  { "name": "RJ-45 Cat6 Ethernet Cable", "category": "Cable", "location": "NMC Demo DC", "quantity": 80, "avgWeeklyUsage": 20, "threshold": 25 },
-  { "name": "48-Port Network Switch", "category": "Switch", "location": "NMC Demo DC", "quantity": 5, "avgWeeklyUsage": 1, "threshold": 2 },
-  { "name": "100-Port Core Switch", "category": "Switch", "location": "NMC Demo DC", "quantity": 3, "avgWeeklyUsage": 1, "threshold": 2 },
-  { "name": "Router Module", "category": "Router", "location": "NMC Demo DC", "quantity": 6, "avgWeeklyUsage": 2, "threshold": 3 },
-  { "name": "SFP+ Transceiver", "category": "Optical", "location": "NMC Demo DC", "quantity": 40, "avgWeeklyUsage": 10, "threshold": 12 },
-  { "name": "Patch Panel", "category": "Cabling", "location": "NMC Demo DC", "quantity": 10, "avgWeeklyUsage": 3, "threshold": 4 },
-  { "name": "Network Adapter Card", "category": "NIC", "location": "NMC Demo DC", "quantity": 18, "avgWeeklyUsage": 6, "threshold": 8 },
-  { "name": "Power Distribution Unit (PDU)", "category": "Power", "location": "NMC Demo DC", "quantity": 9, "avgWeeklyUsage": 3, "threshold": 4 },
-  { "name": "UPS Battery Module", "category": "Power", "location": "NMC Demo DC", "quantity": 6, "avgWeeklyUsage": 2, "threshold": 3 },
-  { "name": "Surge Protector", "category": "Power", "location": "NMC Demo DC", "quantity": 10, "avgWeeklyUsage": 3, "threshold": 4 },
-  { "name": "Circuit Breaker Module", "category": "Power", "location": "NMC Demo DC", "quantity": 5, "avgWeeklyUsage": 1, "threshold": 2 },
-  { "name": "Power Cable C19 to C20", "category": "Cable", "location": "NMC Demo DC", "quantity": 50, "avgWeeklyUsage": 15, "threshold": 20 },
-  { "name": "Air Filter Cartridge", "category": "Cooling", "location": "NMC Demo DC", "quantity": 25, "avgWeeklyUsage": 5, "threshold": 8 },
-  { "name": "Liquid Cooling Pump", "category": "Cooling", "location": "NMC Demo DC", "quantity": 10, "avgWeeklyUsage": 3, "threshold": 4 },
-  { "name": "Thermal Paste Tube", "category": "Cooling", "location": "NMC Demo DC", "quantity": 40, "avgWeeklyUsage": 12, "threshold": 15 },
-  { "name": "Temperature Sensor", "category": "Sensor", "location": "NMC Demo DC", "quantity": 12, "avgWeeklyUsage": 3, "threshold": 4 },
-  { "name": "Humidity Sensor", "category": "Sensor", "location": "NMC Demo DC", "quantity": 8, "avgWeeklyUsage": 2, "threshold": 3 },
-  { "name": "Rack Rail Kit", "category": "Rack", "location": "NMC Demo DC", "quantity": 10, "avgWeeklyUsage": 3, "threshold": 4 },
-  { "name": "Mounting Screws Set", "category": "Rack", "location": "NMC Demo DC", "quantity": 100, "avgWeeklyUsage": 25, "threshold": 30 },
-  { "name": "Cable Management Arm", "category": "Rack", "location": "NMC Demo DC", "quantity": 15, "avgWeeklyUsage": 4, "threshold": 5 },
-  { "name": "Fiber Label Tags", "category": "Accessory", "location": "NMC Demo DC", "quantity": 200, "avgWeeklyUsage": 50, "threshold": 60 },
-  { "name": "Anti-Static Gloves", "category": "Safety", "location": "NMC Demo DC", "quantity": 30, "avgWeeklyUsage": 10, "threshold": 12 },
-  { "name": "Barcode Scanner", "category": "Tool", "location": "NMC Demo DC", "quantity": 6, "avgWeeklyUsage": 2, "threshold": 3 },
-  { "name": "Diagnostic Toolkit", "category": "Tool", "location": "NMC Demo DC", "quantity": 5, "avgWeeklyUsage": 1, "threshold": 2 },
-  { "name": "Spare Fan Blade", "category": "Cooling", "location": "NMC Demo DC", "quantity": 12, "avgWeeklyUsage": 3, "threshold": 4 },
-  { "name": "Thermal Sensor Cable", "category": "Sensor", "location": "NMC Demo DC", "quantity": 20, "avgWeeklyUsage": 6, "threshold": 8 },
-  { "name": "Replacement Network Port", "category": "NIC", "location": "NMC Demo DC", "quantity": 10, "avgWeeklyUsage": 3, "threshold": 4 },
-  { "name": "Drive Bay Caddy", "category": "Storage", "location": "NMC Demo DC", "quantity": 16, "avgWeeklyUsage": 5, "threshold": 6 },
-  { "name": "Rack LED Module", "category": "Accessory", "location": "NMC Demo DC", "quantity": 8, "avgWeeklyUsage": 2, "threshold": 3 }
+  {
+    "name": "NVIDIA A100 GPU",
+    "category": "GPU",
+    "quantity": 6,
+    "avgWeeklyUsage": 3,
+    "threshold": 4,
+    "status": "in_use",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "R1-GPU", "area": "rack" }
+  },
+  {
+    "name": "AMD EPYC CPU",
+    "category": "CPU",
+    "quantity": 12,
+    "avgWeeklyUsage": 5,
+    "threshold": 6,
+    "status": "in_use",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "R1-CPU", "area": "rack" }
+  },
+  {
+    "name": "Intel Xeon CPU",
+    "category": "CPU",
+    "quantity": 8,
+    "avgWeeklyUsage": 4,
+    "threshold": 4,
+    "status": "in_use",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "R2-CPU", "area": "rack" }
+  },
+  {
+    "name": "DDR5 ECC RAM 64GB",
+    "category": "Memory",
+    "quantity": 20,
+    "avgWeeklyUsage": 10,
+    "threshold": 8,
+    "status": "mix",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "R2-MEM", "area": "rack" }
+  },
+  {
+    "name": "NVMe SSD 2TB",
+    "category": "Storage",
+    "quantity": 14,
+    "avgWeeklyUsage": 4,
+    "threshold": 5,
+    "status": "mix",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "R2-SSD", "area": "rack" }
+  },
+  {
+    "name": "HDD 8TB Enterprise",
+    "category": "Storage",
+    "quantity": 10,
+    "avgWeeklyUsage": 3,
+    "threshold": 4,
+    "status": "mix",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "R3-HDD", "area": "rack" }
+  },
+  {
+    "name": "Power Supply Unit 1600W",
+    "category": "Power",
+    "quantity": 7,
+    "avgWeeklyUsage": 2,
+    "threshold": 3,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "SC-A1", "area": "storage_closet" }
+  },
+  {
+    "name": "Cooling Fan Module",
+    "category": "Cooling",
+    "quantity": 15,
+    "avgWeeklyUsage": 5,
+    "threshold": 5,
+    "status": "mix",
+    "location": { "site": "NMC Demo DC", "floor": 2, "shelf": "R4-FAN", "area": "rack" }
+  },
+  {
+    "name": "RAID Controller Card",
+    "category": "Controller",
+    "quantity": 5,
+    "avgWeeklyUsage": 1,
+    "threshold": 2,
+    "status": "in_use",
+    "location": { "site": "NMC Demo DC", "floor": 2, "shelf": "R4-CTRL", "area": "rack" }
+  },
+  {
+    "name": "Motherboard Assembly",
+    "category": "Motherboard",
+    "quantity": 4,
+    "avgWeeklyUsage": 1,
+    "threshold": 2,
+    "status": "mix",
+    "location": { "site": "NMC Demo DC", "floor": 2, "shelf": "R5-MB", "area": "rack" }
+  },
+  {
+    "name": "10 GbE Fiber Cable",
+    "category": "Cable",
+    "quantity": 60,
+    "avgWeeklyUsage": 15,
+    "threshold": 20,
+    "status": "mix",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "R-CAB-F1", "area": "rack" }
+  },
+  {
+    "name": "100 GbE QSFP28 Cable",
+    "category": "Cable",
+    "quantity": 30,
+    "avgWeeklyUsage": 10,
+    "threshold": 12,
+    "status": "mix",
+    "location": { "site": "NMC Demo DC", "floor": 2, "shelf": "R-CAB-F2", "area": "rack" }
+  },
+  {
+    "name": "RJ-45 Cat6 Ethernet Cable",
+    "category": "Cable",
+    "quantity": 80,
+    "avgWeeklyUsage": 20,
+    "threshold": 25,
+    "status": "mix",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "R-CAB-F1B", "area": "rack" }
+  },
+  {
+    "name": "48-Port Network Switch",
+    "category": "Switch",
+    "quantity": 5,
+    "avgWeeklyUsage": 1,
+    "threshold": 2,
+    "status": "in_use",
+    "location": { "site": "NMC Demo DC", "floor": 2, "shelf": "R6-SW", "area": "rack" }
+  },
+  {
+    "name": "100-Port Core Switch",
+    "category": "Switch",
+    "quantity": 3,
+    "avgWeeklyUsage": 1,
+    "threshold": 2,
+    "status": "idle",
+    "location": { "site": "NMC Demo DC", "floor": 2, "shelf": "R6-CORE", "area": "rack" }
+  },
+  {
+    "name": "Router Module",
+    "category": "Router",
+    "quantity": 6,
+    "avgWeeklyUsage": 2,
+    "threshold": 3,
+    "status": "in_use",
+    "location": { "site": "NMC Demo DC", "floor": 2, "shelf": "R7-RT", "area": "rack" }
+  },
+  {
+    "name": "SFP+ Transceiver",
+    "category": "Optical",
+    "quantity": 40,
+    "avgWeeklyUsage": 10,
+    "threshold": 12,
+    "status": "mix",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "R-OPT", "area": "rack" }
+  },
+  {
+    "name": "Patch Panel",
+    "category": "Cabling",
+    "quantity": 10,
+    "avgWeeklyUsage": 3,
+    "threshold": 4,
+    "status": "in_use",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "R-PP", "area": "rack" }
+  },
+  {
+    "name": "Network Adapter Card",
+    "category": "NIC",
+    "quantity": 18,
+    "avgWeeklyUsage": 6,
+    "threshold": 8,
+    "status": "mix",
+    "location": { "site": "NMC Demo DC", "floor": 2, "shelf": "R8-NIC", "area": "rack" }
+  },
+  {
+    "name": "Power Distribution Unit (PDU)",
+    "category": "Power",
+    "quantity": 9,
+    "avgWeeklyUsage": 3,
+    "threshold": 4,
+    "status": "in_use",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "R-PDU", "area": "rack" }
+  },
+  {
+    "name": "UPS Battery Module",
+    "category": "Power",
+    "quantity": 6,
+    "avgWeeklyUsage": 2,
+    "threshold": 3,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "SC-B1", "area": "storage_closet" }
+  },
+  {
+    "name": "Surge Protector",
+    "category": "Power",
+    "quantity": 10,
+    "avgWeeklyUsage": 3,
+    "threshold": 4,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "SC-B2", "area": "storage_closet" }
+  },
+  {
+    "name": "Circuit Breaker Module",
+    "category": "Power",
+    "quantity": 5,
+    "avgWeeklyUsage": 1,
+    "threshold": 2,
+    "status": "in_use",
+    "location": { "site": "NMC Demo DC", "floor": 0, "shelf": "R-ELEC", "area": "rack" }
+  },
+  {
+    "name": "Power Cable C19 to C20",
+    "category": "Cable",
+    "quantity": 50,
+    "avgWeeklyUsage": 15,
+    "threshold": 20,
+    "status": "mix",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "R-PCAB", "area": "rack" }
+  },
+  {
+    "name": "Air Filter Cartridge",
+    "category": "Cooling",
+    "quantity": 25,
+    "avgWeeklyUsage": 5,
+    "threshold": 8,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 0, "shelf": "SC-FILT", "area": "storage_closet" }
+  },
+  {
+    "name": "Liquid Cooling Pump",
+    "category": "Cooling",
+    "quantity": 10,
+    "avgWeeklyUsage": 3,
+    "threshold": 4,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 0, "shelf": "SC-LIQ", "area": "storage_closet" }
+  },
+  {
+    "name": "Thermal Paste Tube",
+    "category": "Cooling",
+    "quantity": 40,
+    "avgWeeklyUsage": 12,
+    "threshold": 15,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 0, "shelf": "SC-TOOLS", "area": "storage_closet" }
+  },
+  {
+    "name": "Temperature Sensor",
+    "category": "Sensor",
+    "quantity": 12,
+    "avgWeeklyUsage": 3,
+    "threshold": 4,
+    "status": "mix",
+    "location": { "site": "NMC Demo DC", "floor": 2, "shelf": "R-SENS-F2", "area": "rack" }
+  },
+  {
+    "name": "Humidity Sensor",
+    "category": "Sensor",
+    "quantity": 8,
+    "avgWeeklyUsage": 2,
+    "threshold": 3,
+    "status": "mix",
+    "location": { "site": "NMC Demo DC", "floor": 2, "shelf": "R-SENS-F2B", "area": "rack" }
+  },
+  {
+    "name": "Rack Rail Kit",
+    "category": "Rack",
+    "quantity": 10,
+    "avgWeeklyUsage": 3,
+    "threshold": 4,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "SC-RACK1", "area": "storage_closet" }
+  },
+  {
+    "name": "Mounting Screws Set",
+    "category": "Rack",
+    "quantity": 100,
+    "avgWeeklyUsage": 25,
+    "threshold": 30,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "SC-RACK2", "area": "storage_closet" }
+  },
+  {
+    "name": "Cable Management Arm",
+    "category": "Rack",
+    "quantity": 15,
+    "avgWeeklyUsage": 4,
+    "threshold": 5,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "SC-RACK3", "area": "storage_closet" }
+  },
+  {
+    "name": "Fiber Label Tags",
+    "category": "Accessory",
+    "quantity": 200,
+    "avgWeeklyUsage": 50,
+    "threshold": 60,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "SC-LABEL", "area": "storage_closet" }
+  },
+  {
+    "name": "Anti-Static Gloves",
+    "category": "Safety",
+    "quantity": 30,
+    "avgWeeklyUsage": 10,
+    "threshold": 12,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "SC-SAFETY", "area": "storage_closet" }
+  },
+  {
+    "name": "Barcode Scanner",
+    "category": "Tool",
+    "quantity": 6,
+    "avgWeeklyUsage": 2,
+    "threshold": 3,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "SC-TOOLS2", "area": "storage_closet" }
+  },
+  {
+    "name": "Diagnostic Toolkit",
+    "category": "Tool",
+    "quantity": 5,
+    "avgWeeklyUsage": 1,
+    "threshold": 2,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 1, "shelf": "SC-TOOLS3", "area": "storage_closet" }
+  },
+  {
+    "name": "Spare Fan Blade",
+    "category": "Cooling",
+    "quantity": 12,
+    "avgWeeklyUsage": 3,
+    "threshold": 4,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 2, "shelf": "SC-FAN", "area": "storage_closet" }
+  },
+  {
+    "name": "Thermal Sensor Cable",
+    "category": "Sensor",
+    "quantity": 20,
+    "avgWeeklyUsage": 6,
+    "threshold": 8,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 2, "shelf": "SC-SENS", "area": "storage_closet" }
+  },
+  {
+    "name": "Replacement Network Port",
+    "category": "NIC",
+    "quantity": 10,
+    "avgWeeklyUsage": 3,
+    "threshold": 4,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 2, "shelf": "SC-NIC", "area": "storage_closet" }
+  },
+  {
+    "name": "Drive Bay Caddy",
+    "category": "Storage",
+    "quantity": 16,
+    "avgWeeklyUsage": 5,
+    "threshold": 6,
+    "status": "spare",
+    "location": { "site": "NMC Demo DC", "floor": 2, "shelf": "SC-CADDY", "area": "storage_closet" }
+  },
+  {
+    "name": "Rack LED Module",
+    "category": "Accessory",
+    "quantity": 8,
+    "avgWeeklyUsage": 2,
+    "threshold": 3,
+    "status": "drained",
+    "location": { "site": "NMC Demo DC", "floor": 3, "shelf": "R-LED", "area": "rack" }
+  }
 ]

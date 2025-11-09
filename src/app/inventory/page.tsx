@@ -45,11 +45,11 @@ export default function Page() {
       });
   }, []);
 
-  // Filter and sort logic
+
   const filteredAndSortedItems = useMemo(() => {
     let filtered = items;
 
-    // Search filter
+
     if (searchQuery.trim()) {
       const query = searchQuery.toLowerCase();
       filtered = filtered.filter(
@@ -60,12 +60,10 @@ export default function Page() {
       );
     }
 
-    // Status filter
     if (statusFilter !== "all") {
       filtered = filtered.filter((item) => item.status === statusFilter);
     }
 
-    // Sorting
     return filtered.sort((a, b) => {
       let aVal: any = a[sortField === "site" ? "location" : sortField];
       let bVal: any = b[sortField === "site" ? "location" : sortField];
