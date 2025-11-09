@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { BundlePicker } from "@/components/floor-plan/bundle-picker";
+import { FloorCellModal } from "@/components/floor-plan/floor-cell-modal";
 import { FloorPlanCanvas } from "@/components/floor-plan/floor-plan-canvas";
 import { FloorPlanLegend } from "@/components/floor-plan/floor-plan-legend";
 import { FloorSelector } from "@/components/floor-plan/floor-selector";
@@ -19,6 +20,7 @@ import {
   FabricFloor,
   TileDefinition,
 } from "@/lib/floor-plan/types";
+import type { CellSelectionPayload } from "@/components/floor-plan/floor-plan-canvas";
 
 type FloorPlanViewProps = {
   floors: FabricFloor[];
@@ -92,6 +94,8 @@ export function FloorPlanView({
     );
   }, [activeFloor]);
 
+  const [selectedCell, setSelectedCell] = useState<CellSelectionPayload | null>(null);
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-950 via-slate-950/70 to-slate-950 px-6 pb-16 text-white">
       <div className="mx-auto w-full max-w-6xl space-y-6">
@@ -130,6 +134,7 @@ export function FloorPlanView({
               tileDefinitions={tiles}
               route={route}
               path={technicianPath}
+              onSelectCell={(payload) => setSelectedCell(payload)}
             />
           ) : null}
 
@@ -205,6 +210,7 @@ export function FloorPlanView({
           </div>
         </div>
       </div>
+      <FloorCellModal selection={selectedCell} onClose={() => setSelectedCell(null)} />
     </div>
   );
 }
