@@ -1,8 +1,6 @@
 "use client";
 
-
 import { useState, useMemo, useEffect } from "react";
-
 
 type InventoryItem = {
   _id?: string;
@@ -23,10 +21,8 @@ type InventoryItem = {
   weeksRemaining: number | null;
 };
 
-
 type SortField = "name" | "quantity" | "weeksRemaining" | "site" | "status";
 type SortOrder = "asc" | "desc";
-
 
 export default function Page() {
   const [items, setItems] = useState<InventoryItem[]>([]);
@@ -35,7 +31,6 @@ export default function Page() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [sortField, setSortField] = useState<SortField>("name");
   const [sortOrder, setSortOrder] = useState<SortOrder>("asc");
-
 
   useEffect(() => {
     fetch("/api/inventory")
@@ -50,11 +45,9 @@ export default function Page() {
       });
   }, []);
 
-
   // Filter and sort logic
   const filteredAndSortedItems = useMemo(() => {
     let filtered = items;
-
 
     // Search filter
     if (searchQuery.trim()) {
@@ -67,18 +60,15 @@ export default function Page() {
       );
     }
 
-
     // Status filter
     if (statusFilter !== "all") {
       filtered = filtered.filter((item) => item.status === statusFilter);
     }
 
-
     // Sorting
     return filtered.sort((a, b) => {
       let aVal: any = a[sortField === "site" ? "location" : sortField];
       let bVal: any = b[sortField === "site" ? "location" : sortField];
-
 
       if (sortField === "site") {
         aVal = a.location.site.toLowerCase();
@@ -91,13 +81,11 @@ export default function Page() {
         bVal = bVal ?? Infinity;
       }
 
-
       if (aVal < bVal) return sortOrder === "asc" ? -1 : 1;
       if (aVal > bVal) return sortOrder === "asc" ? 1 : -1;
       return 0;
     });
   }, [items, searchQuery, statusFilter, sortField, sortOrder]);
-
 
   const needsRefill = useMemo(
     () =>
@@ -106,7 +94,6 @@ export default function Page() {
       ),
     [filteredAndSortedItems]
   );
-
 
   const handleSort = (field: SortField) => {
     if (sortField === field) {
@@ -117,13 +104,11 @@ export default function Page() {
     }
   };
 
-
   const SortIcon = ({ field }: { field: SortField }) => (
     <span className={sortField !== field ? "text-slate-600 ml-1" : "ml-1"}>
       {sortField !== field ? "↕" : sortOrder === "asc" ? "↑" : "↓"}
     </span>
   );
-
 
   const StatusBadge = ({ status }: { status: string }) => {
     const colors = {
@@ -140,6 +125,19 @@ export default function Page() {
     );
   };
 
+  const DepletionBadge = ({ status }: { status: string }) => {
+    const colors = {
+      Healthy: "bg-green-500/20 text-green-400",
+      Warning: "bg-yellow-500/20 text-yellow-400",
+      Critical: "bg-red-500/20 text-red-400",
+      Depleted: "bg-red-600/20 text-red-500",
+    };
+    return (
+      <span className={`px-2 py-1 rounded-full text-xs font-medium ${colors[status as keyof typeof colors] || "bg-slate-500/20 text-slate-300"}`}>
+        {status}
+      </span>
+    );
+  };
 
   if (loading) {
     return (
@@ -151,11 +149,9 @@ export default function Page() {
     );
   }
 
-
   return (
     <main className="min-h-screen bg-slate-950 text-slate-100 p-8">
       <h1 className="text-2xl font-semibold mb-4">NMC Inventory Overview</h1>
-
 
       {/* Controls */}
       <div className="mb-6 flex flex-wrap gap-4">
@@ -169,7 +165,6 @@ export default function Page() {
             className="w-full px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg text-slate-100 placeholder-slate-500 focus:outline-none focus:border-slate-500"
           />
         </div>
-
 
         {/* Status Filter */}
         <div>
@@ -187,7 +182,6 @@ export default function Page() {
           </select>
         </div>
 
-
         {/* Results Count */}
         <div className="flex items-center px-4 py-2 bg-slate-900 border border-slate-700 rounded-lg">
           <span className="text-sm text-slate-400">
@@ -196,13 +190,11 @@ export default function Page() {
         </div>
       </div>
 
-
       {/* Needs Refill Section */}
       <section className="mb-6">
         <h2 className="text-xl font-semibold mb-2">
           Items Needing Refill (Warning & Critical)
         </h2>
-
 
         {needsRefill.length === 0 ? (
           <p className="text-sm text-slate-400">
@@ -237,7 +229,9 @@ export default function Page() {
                     <td className="px-3 py-2 text-right">{item.quantity}</td>
                     <td className="px-3 py-2 text-right">{item.threshold}</td>
                     <td className="px-3 py-2 text-right">{item.weeksRemaining ?? "-"}</td>
-                    <td className="px-3 py-2 text-right">{item.depletionStatus}</td>
+                    <td className="px-3 py-2 text-right">
+                      <DepletionBadge status={item.depletionStatus} />
+                    </td>
                   </tr>
                 ))}
               </tbody>
@@ -246,10 +240,8 @@ export default function Page() {
         )}
       </section>
 
-
       {/* Divider */}
       <div className="border-t border-slate-800 my-6" />
-
 
       {/* All Inventory Section */}
       <section>
@@ -312,7 +304,6 @@ export default function Page() {
           </table>
         </div>
 
-
         {filteredAndSortedItems.length === 0 && (
           <p className="text-sm text-slate-400 mt-4 text-center">
             No items match your current filters.
@@ -322,6 +313,3 @@ export default function Page() {
     </main>
   );
 }
-
-
-
