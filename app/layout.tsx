@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { FloatingIslandNav } from "@/components/layout/floating-island-nav";
+import { ProfileProvider } from "@/contexts/profile-context";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -29,16 +30,18 @@ export default function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
-        <FloatingIslandNav
-          links={[
-            { label: "Overview", href: "/" },
-            { label: "Tickets", href: "/tickets" },
-            { label: "Field Ops", href: "/field-ops" },
-            { label: "Floor Plan", href: "/floor-plan" },
-            { label: "Inventory", href: "/inventory" },
-          ]}
-        />
-        <div className="pt-24">{children}</div>
+        <ProfileProvider>
+          <FloatingIslandNav
+            links={[
+              { label: "Overview", href: "/" },
+              { label: "Tickets", href: "/tickets" },
+              { label: "Field Ops", href: "/field-ops" },
+              { label: "Floor Plan", href: "/floor-plan" },
+              { label: "Inventory", href: "/inventory" },
+            ]}
+          />
+          <div className="pt-24">{children}</div>
+        </ProfileProvider>
       </body>
     </html>
   );

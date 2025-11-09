@@ -15,6 +15,11 @@ import {
   type EnhancedTask,
   type TaskCategory,
 } from "@/lib/bundling-engine";
+import { useProfile } from "@/contexts/profile-context";
+import {
+  hasPhysicalLimitations,
+  isPhysicallyDemandingFloor,
+} from "@/lib/profile/data";
 
 const severityOptions = ["critical", "high", "medium", "low"].map((severity) => ({
   value: severity,
@@ -378,6 +383,9 @@ function calculateTimeSaved(tasks: EnhancedTask[]): number {
 }
 
 function BundleBoard({ bundles }: { bundles: Bundle[] }) {
+  const { profile } = useProfile();
+  const showHealthWarnings = hasPhysicalLimitations(profile);
+
   if (bundles.length === 0) {
     return (
       <div className="rounded-2xl border border-white/15 bg-black/30 px-4 py-5 text-sm text-white/70">
@@ -390,7 +398,11 @@ function BundleBoard({ bundles }: { bundles: Bundle[] }) {
   return (
     <div className="space-y-5">
       {bundles.map((bundle) => (
-        <BundleCard key={bundle.id} bundle={bundle} />
+        <BundleCard
+          key={bundle.id}
+          bundle={bundle}
+          showHealthWarnings={showHealthWarnings}
+        />
       ))}
     </div>
   );
@@ -402,7 +414,13 @@ const severityBadgeColors: Record<EnhancedTask["severity"], string> = {
   medium: "bg-emerald-500/20 text-emerald-100 border border-emerald-400/40",
 };
 
-function BundleCard({ bundle }: { bundle: Bundle }) {
+function BundleCard({
+  bundle,
+  showHealthWarnings,
+}: {
+  bundle: Bundle;
+  showHealthWarnings: boolean;
+}) {
   const tasks = bundle.tasks as BundledTask[];
   const timeSaved = calculateTimeSaved(tasks);
   const isSingleTask = tasks.length === 1;
@@ -440,10 +458,16 @@ function BundleCard({ bundle }: { bundle: Bundle }) {
       <div className="mt-4 space-y-3">
         {tasks.map((task) => {
           const ticket = task.originalTicket;
+          const isDemandingFloor =
+            showHealthWarnings && isPhysicallyDemandingFloor(ticket.floor);
           return (
             <div
               key={task.id}
-              className="rounded-2xl border border-white/10 bg-white/5 p-4 text-sm text-white transition hover:border-white/30"
+              className={`rounded-2xl border p-4 text-sm text-white transition ${
+                isDemandingFloor
+                  ? "border-amber-400/30 bg-amber-500/5 hover:border-amber-400/50"
+                  : "border-white/10 bg-white/5 hover:border-white/30"
+              }`}
             >
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
@@ -480,7 +504,28 @@ function BundleCard({ bundle }: { bundle: Bundle }) {
                   <p className="uppercase tracking-[0.3em] text-white/40">
                     Location
                   </p>
-                  <p className="text-white">{formatLocation(ticket)}</p>
+                  <div className="flex items-center gap-2">
+                    <p className="text-white">{formatLocation(ticket)}</p>
+                    {isDemandingFloor && (
+                      <span
+                        className="inline-flex items-center gap-1 rounded-full border border-amber-400/50 bg-amber-500/20 px-2 py-0.5 text-[11px] font-semibold text-amber-200"
+                        title="This floor may be physically demanding given your health conditions"
+                      >
+                        <svg
+                          className="h-3 w-3"
+                          fill="currentColor"
+                          viewBox="0 0 20 20"
+                        >
+                          <path
+                            fillRule="evenodd"
+                            d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                        Caution
+                      </span>
+                    )}
+                  </div>
                 </div>
               </div>
               <div className="mt-3 flex flex-wrap gap-2 text-[11px] uppercase tracking-wide text-white/60">
