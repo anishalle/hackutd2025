@@ -97,6 +97,7 @@ RULES:
 
 async function slackUserGet(path: string, params: Record<string, string> = {}) {
   const token = process.env.SLACK_USER_TOKEN;
+
   if (!token) throw new Error("Missing SLACK_USER_TOKEN");
 
   const url = new URL(`https://slack.com/api/${path}`);
@@ -125,11 +126,9 @@ export async function GET(_req: NextRequest) {
     }
     const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
-    // 1) Identify the incident user (the account whose DMs we read)
     const auth = await slackUserGet("auth.test");
     const incidentUserId = auth.user_id as string;
 
-    // 2) List IM channels this user is in
     const ims = await slackUserGet("conversations.list", {
       types: "im",
       limit: "100",
@@ -137,8 +136,8 @@ export async function GET(_req: NextRequest) {
 
     const imChannels: { id: string }[] = ims.channels || [];
     const messages: { id: string; text: string; user: string; ts: string }[] = [];
+    const allowedUserId = process.env.SLACK_ALLOWED_USER_ID;
 
-    // 3) For each IM, pull recent messages FROM other users TO this incident account
     for (const im of imChannels) {
       const hist = await slackUserGet("conversations.history", {
         channel: im.id,
@@ -147,24 +146,24 @@ export async function GET(_req: NextRequest) {
 
       for (const m of hist.messages || []) {
         if (
-          !m.subtype &&
-          m.user &&
-          m.user !== incidentUserId && // from someone else
-          typeof m.text === "string"
-        ) {
-          messages.push({
-            id: `${im.id}-${m.ts}`,
-            text: m.text,
-            user: m.user,
-            ts: m.ts,
-          });
-        }
+  !m.subtype &&
+  m.user &&
+  m.user !== incidentUserId &&            
+  (!allowedUserId || m.user === allowedUserId) && 
+  typeof m.text === "string"
+) {
+  messages.push({
+    id: `${im.id}-${m.ts}`,
+    text: m.text,
+    user: m.user,
+    ts: m.ts,
+  });
+}
       }
     }
 
     const tickets: Ticket[] = [];
 
-    // 4) Turn each message into a Ticket
     for (const msg of messages) {
       const completion = await openai.chat.completions.create({
         model: "gpt-4.1-mini",
