@@ -205,7 +205,7 @@ export default function Home() {
           <div className="flex flex-wrap items-center justify-between gap-4">
             <div>
               <p className="text-xs uppercase tracking-[0.4em] text-cyan-300/80">
-                Hyperion Compute
+                DcDaddy Compute
               </p>
               <h1 className="text-4xl font-semibold text-white">
                 Work Orders · HPC Platform Ops

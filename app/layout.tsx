@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Hyperion Fabric Ops",
+  title: "DcDaddy Fabric Ops",
   description:
     "HPC work orders, technician routing, and automation for NVIDIA-powered fabrics.",
 };
