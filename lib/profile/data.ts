@@ -4,7 +4,7 @@ export const defaultProfile: UserProfile = {
   id: "user-001",
   firstName: "Jordan",
   lastName: "Martinez",
-  email: "jordan.martinez@hyperion.compute",
+  email: "jordan.martinez@dcdaddy.us",
   role: "technician",
   occupation: "Senior Field Technician",
   region: "US-South",
