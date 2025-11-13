@@ -132,5 +132,3 @@ Built for HackUTD’s NMC² (HPC Computing) challenge, this Next.js app is a ful
 3. **Automation hooks** – Replace the credential simulator with real workflow actions (Terraform, NetBox, runbooks).  
 4. **Inventory analytics** – Stream inventory usage deltas from sensors/ERP instead of static Mongo docs and surface predictive restock alerts in the hero panel.  
 5. **Technician safety** – Extend the profile context with wearables or fatigue signals so dispatching can avoid overworking certain crews.
-
-Let me know what to clarify or if you want help wiring any of these next steps!
